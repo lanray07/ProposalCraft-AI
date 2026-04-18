@@ -1,9 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const rootDir = path.resolve(__dirname, "..", "..");
+const rootDir = process.cwd();
 const distDir = path.resolve(rootDir, "dist");
 const sourceWidgetPath = path.resolve(
   rootDir,
@@ -42,11 +39,48 @@ export function getWidgetHtml(): string {
   }
 
   const html = fs.readFileSync(htmlPath, "utf8");
-  return qualifyAssetUrls(html, getBaseUrl());
+  return inlineBuiltAssets(html) ?? qualifyAssetUrls(html, getBaseUrl());
 }
 
 function qualifyAssetUrls(html: string, baseUrl: string): string {
   return html
     .replaceAll('src="/', `src="${baseUrl}/`)
     .replaceAll('href="/', `href="${baseUrl}/`);
+}
+
+function inlineBuiltAssets(html: string): string | undefined {
+  const scriptTag = html.match(/<script\b[^>]*\bsrc="([^"]+)"[^>]*><\/script>/);
+  const stylesheetTag = html.match(/<link\b[^>]*\brel="stylesheet"[^>]*\bhref="([^"]+)"[^>]*>/);
+  const scriptSrc = scriptTag?.[1];
+  const stylesheetHref = stylesheetTag?.[1];
+
+  if (!scriptSrc) {
+    return undefined;
+  }
+
+  const scriptPath = path.join(distDir, scriptSrc.replace(/^\//, ""));
+
+  if (!fs.existsSync(scriptPath)) {
+    return undefined;
+  }
+
+  const script = fs.readFileSync(scriptPath, "utf8");
+  const css = stylesheetHref
+    ? readBuiltAsset(stylesheetHref)
+    : "";
+
+  return html
+    .replace(
+      /<link\b[^>]*\brel="stylesheet"[^>]*>/,
+      css ? `<style>${css}</style>` : ""
+    )
+    .replace(
+      /<script\b[^>]*\bsrc="[^"]+"[^>]*><\/script>/,
+      `<script type="module">${script}</script>`
+    );
+}
+
+function readBuiltAsset(assetUrl: string): string {
+  const assetPath = path.join(distDir, assetUrl.replace(/^\//, ""));
+  return fs.existsSync(assetPath) ? fs.readFileSync(assetPath, "utf8") : "";
 }
