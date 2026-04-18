@@ -135,14 +135,21 @@ function descriptorMeta(invoking: string, invoked: string) {
 
 function resourceMeta() {
   const baseUrl = getBaseUrl();
+  const allowedDomains = Array.from(
+    new Set([
+      baseUrl,
+      "https://proposalcraft-ai-blue.vercel.app",
+      "https://proposalcraft-ai-lanraybanks-9759s-projects.vercel.app"
+    ])
+  );
 
   return {
     "openai/widgetDescription":
       "A compact proposal builder for service businesses with form inputs and a copy-ready proposal card.",
     "openai/widgetPrefersBorder": true,
     "openai/widgetCSP": {
-      connect_domains: [baseUrl],
-      resource_domains: [baseUrl, "https://esm.sh"]
+      connect_domains: allowedDomains,
+      resource_domains: allowedDomains
     }
   } as const;
 }
