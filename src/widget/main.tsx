@@ -60,7 +60,7 @@ const initialForm: FormState = {
 const savedFormKey = "proposalcraft.form.v1";
 
 function App() {
-  const hostProposal = window.openai?.toolOutput?.structuredContent?.proposal;
+  const hostProposal = readHostProposal();
   const [form, setForm] = useState<FormState>(
     () => formFromHost() ?? readSavedForm() ?? initialForm
   );
@@ -402,6 +402,14 @@ function formFromHost(): FormState | undefined {
     timeline: String(input.timeline ?? initialForm.timeline),
     tone: isTone(input.tone) ? input.tone : initialForm.tone
   };
+}
+
+function readHostProposal(): Proposal | undefined {
+  const output = window.openai?.toolOutput as
+    | { proposal?: Proposal; structuredContent?: { proposal?: Proposal } }
+    | undefined;
+
+  return output?.proposal ?? output?.structuredContent?.proposal;
 }
 
 function readSavedForm(): FormState | undefined {
