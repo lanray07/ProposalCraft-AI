@@ -29,6 +29,7 @@ describe("proposal generation", () => {
       "Payment Terms",
       "Assumptions",
       "Optional Upsells",
+      "Follow-up Email",
       "Approval"
     ]);
     expect(proposal.pricingSummary).toContain("$680");
@@ -77,6 +78,8 @@ describe("proposal generation", () => {
     expect(proposal.clientReadyProposal).toContain(
       "Estimated remaining balance: $510"
     );
+    expect(proposal.followUpEmail).toContain("Hi Acme Offices,");
+    expect(proposal.followUpEmail).toContain("Bright Finish Cleaning");
   });
 
   it("explains the template rules", () => {
@@ -91,9 +94,15 @@ describe("proposal generation", () => {
   it("ships the required service templates", () => {
     expect(Object.keys(getTemplates()).sort()).toEqual([
       "cleaning",
+      "electrical",
       "general-contractor",
+      "handyman",
       "landscaping",
-      "paving"
+      "painting",
+      "paving",
+      "plumbing",
+      "pressure-washing",
+      "roofing"
     ]);
   });
 

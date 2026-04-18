@@ -45,7 +45,18 @@ const proposalInputJsonSchema: Tool["inputSchema"] = {
     },
     serviceType: {
       type: "string",
-      enum: ["landscaping", "paving", "cleaning", "general-contractor"],
+      enum: [
+        "landscaping",
+        "paving",
+        "cleaning",
+        "general-contractor",
+        "painting",
+        "plumbing",
+        "electrical",
+        "handyman",
+        "pressure-washing",
+        "roofing"
+      ],
       description: "The reusable service template to apply."
     },
     price: {
@@ -91,7 +102,18 @@ const explainInputJsonSchema: Tool["inputSchema"] = {
   properties: {
     serviceType: {
       type: "string",
-      enum: ["landscaping", "paving", "cleaning", "general-contractor"]
+      enum: [
+        "landscaping",
+        "paving",
+        "cleaning",
+        "general-contractor",
+        "painting",
+        "plumbing",
+        "electrical",
+        "handyman",
+        "pressure-washing",
+        "roofing"
+      ]
     },
     tone: {
       type: "string",

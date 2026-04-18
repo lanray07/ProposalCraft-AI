@@ -2,7 +2,13 @@ export const serviceTypes = [
   "landscaping",
   "paving",
   "cleaning",
-  "general-contractor"
+  "general-contractor",
+  "painting",
+  "plumbing",
+  "electrical",
+  "handyman",
+  "pressure-washing",
+  "roofing"
 ] as const;
 
 export const tones = ["formal", "friendly", "premium"] as const;
@@ -44,6 +50,7 @@ export type Proposal = {
   paymentTerms: string[];
   assumptions: string[];
   optionalUpsells: string[];
+  followUpEmail: string;
   clientReadyProposal: string;
   sections: ProposalSection[];
 };

@@ -101,6 +101,7 @@ export function explainProposal(
       "Payment Terms",
       "Assumptions",
       "Optional Upsells",
+      "Follow-up Email",
       "Approval"
     ]
   };
@@ -114,6 +115,14 @@ function buildProposal(input: ProposalInput): Proposal {
   const projectOverview = `${copy.greeting} This ${template.overviewLead} covers: ${cleanedDescription} ${copy.promise}`;
   const pricingSummary = `Total proposed price${clientPrefix}: ${formatCurrency(input.price)}. This price is based on the project details provided and the assumptions listed below.`;
   const depositSummary = createDepositSummary(input.price, input.depositPercent);
+  const followUpEmail = createFollowUpEmail({
+    businessName: input.businessName,
+    clientName: input.clientName,
+    proposalTitle: createTitle(template.label, input.clientName),
+    price: input.price,
+    timeline: input.timeline,
+    tone: input.tone
+  });
 
   const proposal: Proposal = {
     title: createTitle(template.label, input.clientName),
@@ -129,6 +138,7 @@ function buildProposal(input: ProposalInput): Proposal {
     paymentTerms: template.paymentTerms,
     assumptions: template.assumptions,
     optionalUpsells: template.upsells,
+    followUpEmail,
     clientReadyProposal: "",
     sections: []
   };
@@ -161,6 +171,7 @@ function assembleProposal(proposal: Proposal): Proposal {
     },
     { title: "Assumptions", body: proposal.assumptions },
     { title: "Optional Upsells", body: proposal.optionalUpsells },
+    { title: "Follow-up Email", body: proposal.followUpEmail },
     { title: "Approval", body: toneCopy[proposal.tone].close }
   ];
 
@@ -210,6 +221,28 @@ function createDepositSummary(
   const balance = price - depositAmount;
 
   return `${depositPercent}% deposit due on approval: ${formatCurrency(depositAmount)}. Estimated remaining balance: ${formatCurrency(balance)}.`;
+}
+
+function createFollowUpEmail(input: {
+  businessName?: string;
+  clientName?: string;
+  proposalTitle: string;
+  price: number;
+  timeline: string;
+  tone: Tone;
+}): string {
+  const greeting = input.clientName ? `Hi ${input.clientName},` : "Hi,";
+  const sender = input.businessName ? `\n\n${input.businessName}` : "";
+
+  if (input.tone === "premium") {
+    return `${greeting}\n\nThank you again for the opportunity to prepare this proposal. I have attached ${input.proposalTitle}, including the recommended scope, timeline, investment summary, assumptions, and optional enhancements.\n\nThe proposed price is ${formatCurrency(input.price)}, with an expected timeline of ${input.timeline}. Please review it when convenient, and I will be happy to answer questions or refine the scope before approval.${sender}`;
+  }
+
+  if (input.tone === "friendly") {
+    return `${greeting}\n\nThanks again for sharing the project details. I have attached ${input.proposalTitle} with the scope, timeline, price, assumptions, and optional add-ons in one place.\n\nThe proposed price is ${formatCurrency(input.price)}, and the expected timeline is ${input.timeline}. Let me know what you think, and I can make any needed adjustments before we move forward.${sender}`;
+  }
+
+  return `${greeting}\n\nPlease find attached ${input.proposalTitle}. It includes the project overview, scope of work, timeline, pricing summary, payment terms, assumptions, and optional upsells for review.\n\nThe proposed price is ${formatCurrency(input.price)}, and the expected timeline is ${input.timeline}. Please confirm if you would like to proceed or if any revisions are required.${sender}`;
 }
 
 function formatCurrency(value: number): string {

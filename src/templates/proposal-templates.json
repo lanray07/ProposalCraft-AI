@@ -122,5 +122,185 @@
       "Extended workmanship check-in",
       "Detailed punch-list and warranty documentation"
     ]
+  },
+  "painting": {
+    "label": "Painting",
+    "overviewLead": "painting and finishing project",
+    "scopeItems": [
+      "Confirm colors, sheen, finish areas, access, and surface conditions before work begins.",
+      "Protect floors, fixtures, furniture, landscaping, and adjacent surfaces where practical.",
+      "Prepare agreed surfaces through routine cleaning, sanding, filling, caulking, and spot priming as required.",
+      "Apply agreed primer, paint, stain, or finish using suitable trade methods for the surface and product.",
+      "Complete touch-ups, remove routine masking, and leave finished areas neat at handover.",
+      "Walk through the completed work with the client and record any agreed touch-up items."
+    ],
+    "paymentTerms": [
+      "A deposit may be required to reserve the schedule and purchase paint or finishing materials.",
+      "Progress payment may apply for multi-room, exterior, or multi-stage projects.",
+      "Final payment is due when the agreed painting scope is complete."
+    ],
+    "assumptions": [
+      "Client will confirm final colors and finishes before materials are purchased.",
+      "Major drywall repair, rot repair, lead paint handling, mold remediation, or water damage repair are excluded unless stated.",
+      "Coverage may vary based on existing color, surface porosity, product choice, and lighting conditions.",
+      "Client will move or secure delicate items unless furniture moving is included in the project details."
+    ],
+    "upsells": [
+      "Premium washable paint upgrade",
+      "Trim, doors, or cabinet add-on",
+      "Accent wall or feature finish",
+      "Exterior pressure wash before painting",
+      "Annual touch-up visit"
+    ]
+  },
+  "plumbing": {
+    "label": "Plumbing",
+    "overviewLead": "plumbing service project",
+    "scopeItems": [
+      "Confirm fixture locations, shutoff access, water pressure, visible pipework, and client priorities before work begins.",
+      "Protect nearby surfaces and isolate the work area where practical.",
+      "Supply standard labor, fittings, and materials listed in the project details.",
+      "Complete the agreed plumbing repair, replacement, installation, or connection using suitable trade practices.",
+      "Test visible connections for leaks and confirm basic operation before handover.",
+      "Clean routine work debris and explain any follow-up recommendations to the client."
+    ],
+    "paymentTerms": [
+      "A deposit may be requested for fixtures, special-order parts, or scheduled installation work.",
+      "Additional hidden defects or code-required upgrades require approval before proceeding.",
+      "Final payment is due once the agreed plumbing scope has been completed and tested."
+    ],
+    "assumptions": [
+      "Quote assumes accessible shutoffs, exposed work areas, and standard residential/commercial plumbing conditions.",
+      "Hidden pipe damage, blocked drains, failed valves, wall/floor repair, or water damage restoration are excluded unless stated.",
+      "Permits, inspections, and code upgrades are excluded unless included in the project details.",
+      "Client will provide access to water shutoffs and affected rooms during agreed working hours."
+    ],
+    "upsells": [
+      "Fixture upgrade package",
+      "Water pressure or leak inspection",
+      "Drain cleaning add-on",
+      "Shutoff valve replacement",
+      "Preventive maintenance visit"
+    ]
+  },
+  "electrical": {
+    "label": "Electrical",
+    "overviewLead": "electrical service project",
+    "scopeItems": [
+      "Confirm access, fixture/device locations, panel location, circuit needs, and visible site conditions before work begins.",
+      "Protect adjacent finishes and isolate the work area where practical.",
+      "Supply standard labor, devices, fixtures, or materials listed in the project details.",
+      "Complete agreed electrical installation, replacement, troubleshooting, or repair using suitable trade practices.",
+      "Test completed devices, switches, fixtures, or circuits for basic operation before handover.",
+      "Clean routine work debris and note any safety or upgrade recommendations."
+    ],
+    "paymentTerms": [
+      "A deposit may be required for fixtures, devices, panels, or special-order electrical materials.",
+      "Additional faults, unsafe wiring, or code-required upgrades require approval before proceeding.",
+      "Final payment is due once the agreed electrical scope is complete and basic operation has been tested."
+    ],
+    "assumptions": [
+      "Quote assumes accessible work areas, suitable existing wiring, and available panel capacity unless stated otherwise.",
+      "Permit fees, inspections, panel upgrades, drywall repair, painting, or hidden wiring defects are excluded unless included.",
+      "Client will provide safe access to the electrical panel and affected rooms during agreed working hours.",
+      "Final compliance requirements may depend on local authority, inspector, or utility requirements."
+    ],
+    "upsells": [
+      "Fixture or smart switch upgrade",
+      "Panel labeling and safety check",
+      "Surge protection installation",
+      "Additional outlet or lighting add-on",
+      "Annual electrical maintenance visit"
+    ]
+  },
+  "handyman": {
+    "label": "Handyman",
+    "overviewLead": "handyman service project",
+    "scopeItems": [
+      "Confirm task list, priorities, work areas, access, and any supplied materials before work begins.",
+      "Protect nearby surfaces and organize the work area for safe, efficient completion.",
+      "Complete the listed repair, assembly, installation, adjustment, or maintenance tasks using appropriate methods.",
+      "Use standard tools and agreed materials required for the described work.",
+      "Check completed items for basic function, fit, alignment, or finish before handover.",
+      "Tidy routine debris and review completed tasks with the client."
+    ],
+    "paymentTerms": [
+      "A deposit may be requested for scheduled work requiring materials or reserved time.",
+      "Additional tasks beyond the agreed list may be quoted separately or billed by approved change order.",
+      "Final payment is due when the agreed handyman scope is complete."
+    ],
+    "assumptions": [
+      "Quote assumes tasks are non-structural and accessible with standard tools and ladders.",
+      "Specialist trade work, permits, hazardous materials, structural repairs, or hidden damage are excluded unless stated.",
+      "Client-supplied materials are assumed complete, suitable, and available at the start of work.",
+      "Manufacturer defects, missing parts, and incompatible hardware may affect completion or require additional costs."
+    ],
+    "upsells": [
+      "Priority maintenance checklist",
+      "Hardware or fixture upgrade",
+      "Quarterly property maintenance visit",
+      "Caulking and sealant refresh",
+      "Punch-list documentation"
+    ]
+  },
+  "pressure-washing": {
+    "label": "Pressure Washing",
+    "overviewLead": "pressure washing service",
+    "scopeItems": [
+      "Confirm surfaces, water access, drainage, staining, and any delicate areas before work begins.",
+      "Protect nearby plants, outlets, fixtures, furniture, and areas that should not be washed where practical.",
+      "Prepare the surface by clearing routine loose debris from agreed work areas.",
+      "Apply suitable pressure washing or soft washing methods based on surface type and condition.",
+      "Rinse cleaned areas and review obvious remaining stains, marks, or problem areas with the client.",
+      "Tidy routine equipment and leave access areas safe for normal use."
+    ],
+    "paymentTerms": [
+      "Payment is due on completion unless recurring exterior maintenance terms are agreed.",
+      "A deposit may be requested for larger commercial, multi-surface, or scheduled route work.",
+      "Additional surfaces requested on site may be quoted separately before work continues."
+    ],
+    "assumptions": [
+      "Client will provide safe access to water, exterior areas, and any required gates or entry points.",
+      "Results depend on surface age, staining, oxidation, algae, prior coatings, and material condition.",
+      "Paint removal, restoration, sealing, hazardous cleanup, or repairs are excluded unless stated.",
+      "Client will move vehicles, fragile decor, and loose outdoor items before the appointment."
+    ],
+    "upsells": [
+      "Driveway or patio sealing",
+      "Gutter exterior brightening",
+      "Window rinse add-on",
+      "Recurring exterior maintenance plan",
+      "Fence or deck cleaning"
+    ]
+  },
+  "roofing": {
+    "label": "Roofing",
+    "overviewLead": "roofing service project",
+    "scopeItems": [
+      "Confirm roof access, visible issue areas, material type, weather constraints, and safety requirements before work begins.",
+      "Protect surrounding areas where practical and prepare safe access for agreed roofing work.",
+      "Supply labor, standard tools, and agreed materials listed in the project details.",
+      "Complete agreed repair, replacement, flashing, sealing, inspection, or maintenance work using suitable trade practices.",
+      "Remove routine roofing debris and check visible completed areas before handover.",
+      "Review completed work, warranty notes, and any recommended follow-up items with the client."
+    ],
+    "paymentTerms": [
+      "A deposit may be required for roofing materials, scheduling, and setup.",
+      "Progress payments may apply for multi-day or material-heavy roofing projects.",
+      "Final payment is due when the agreed roofing scope is complete, subject to weather and safe access."
+    ],
+    "assumptions": [
+      "Quote assumes safe roof access and no concealed structural damage unless stated in the project details.",
+      "Decking replacement, major structural repair, insulation, interior damage, mold, or pest issues are excluded unless included.",
+      "Weather, supplier availability, and safety conditions may affect the schedule.",
+      "Permits, inspections, and disposal fees are excluded unless specifically included."
+    ],
+    "upsells": [
+      "Gutter cleaning or repair",
+      "Roof maintenance inspection",
+      "Upgraded flashing or ventilation",
+      "Moss or algae treatment",
+      "Photo documentation report"
+    ]
   }
 }

@@ -161,7 +161,9 @@ textarea:focus {
 
 .ghost,
 .copy,
-.download {
+.download,
+.print,
+.copy-email {
   border-color: transparent;
   background: transparent;
   color: #233129;
@@ -194,10 +196,18 @@ textarea:focus {
 }
 
 .copy,
-.download {
+.download,
+.print,
+.copy-email {
   min-width: 88px;
   border-color: #d8ded4;
   background: #ffffff;
+}
+
+.form-note {
+  margin-top: 12px;
+  color: #637268;
+  font-size: 0.86rem;
 }
 
 .sections {
@@ -274,7 +284,36 @@ textarea:focus {
 
   .output-actions,
   .copy,
-  .download {
+  .download,
+  .print,
+  .copy-email {
     width: 100%;
+  }
+}
+
+@media print {
+  body {
+    background: #ffffff;
+  }
+
+  .shell {
+    display: block;
+    width: 100%;
+    padding: 0;
+  }
+
+  .workspace,
+  .output-actions {
+    display: none;
+  }
+
+  .output {
+    border: 0;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .output-header {
+    border-bottom-color: #cfd7cf;
   }
 }

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   explainProposal,
@@ -30,7 +30,13 @@ const serviceLabels: Record<ServiceType, string> = {
   landscaping: "Landscaping",
   paving: "Paving",
   cleaning: "Cleaning",
-  "general-contractor": "General contractor"
+  "general-contractor": "General contractor",
+  painting: "Painting",
+  plumbing: "Plumbing",
+  electrical: "Electrical",
+  handyman: "Handyman",
+  "pressure-washing": "Pressure washing",
+  roofing: "Roofing"
 };
 
 const toneLabels: Record<Tone, string> = {
@@ -51,9 +57,13 @@ const initialForm: FormState = {
   tone: "formal"
 };
 
+const savedFormKey = "proposalcraft.form.v1";
+
 function App() {
   const hostProposal = window.openai?.toolOutput?.structuredContent?.proposal;
-  const [form, setForm] = useState<FormState>(() => formFromHost() ?? initialForm);
+  const [form, setForm] = useState<FormState>(
+    () => formFromHost() ?? readSavedForm() ?? initialForm
+  );
   const [proposal, setProposal] = useState<Proposal | undefined>(hostProposal);
   const [error, setError] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
@@ -71,6 +81,10 @@ function App() {
           Number(form.depositPercent) <= 100)),
     [form]
   );
+
+  useEffect(() => {
+    saveForm(form);
+  }, [form]);
 
   async function handleGenerate() {
     await runProposalTool("generateProposal");
@@ -263,8 +277,22 @@ function App() {
             <button type="button" className="ghost" onClick={handleExplain}>
               Explain
             </button>
+            <button
+              type="button"
+              className="ghost"
+              onClick={() => {
+                setForm(initialForm);
+                setProposal(undefined);
+                setError("");
+                setExplanation("");
+                removeSavedForm();
+              }}
+            >
+              Reset
+            </button>
           </div>
         </form>
+        <p className="form-note">Inputs save on this device for the next proposal.</p>
 
         {error ? <p className="error" role="alert">{error}</p> : null}
         {explanation ? <p className="explanation">{explanation}</p> : null}
@@ -277,6 +305,7 @@ function App() {
 
 function ProposalCard({ proposal }: { proposal?: Proposal }) {
   const [copyStatus, setCopyStatus] = useState("");
+  const [emailStatus, setEmailStatus] = useState("");
 
   if (!proposal) {
     return (
@@ -316,6 +345,20 @@ function ProposalCard({ proposal }: { proposal?: Proposal }) {
             onClick={() => downloadProposal(proposal)}
           >
             Download
+          </button>
+          <button type="button" className="print" onClick={() => window.print()}>
+            PDF
+          </button>
+          <button
+            type="button"
+            className="copy-email"
+            onClick={async () => {
+              await copyProposal(proposal.followUpEmail);
+              setEmailStatus("Email copied");
+              window.setTimeout(() => setEmailStatus(""), 1800);
+            }}
+          >
+            {emailStatus || "Copy email"}
           </button>
         </div>
       </div>
@@ -359,6 +402,50 @@ function formFromHost(): FormState | undefined {
     timeline: String(input.timeline ?? initialForm.timeline),
     tone: isTone(input.tone) ? input.tone : initialForm.tone
   };
+}
+
+function readSavedForm(): FormState | undefined {
+  try {
+    const raw = localStorage.getItem(savedFormKey);
+    const parsed = raw ? JSON.parse(raw) : undefined;
+
+    if (!parsed || typeof parsed !== "object") {
+      return undefined;
+    }
+
+    return {
+      businessName: String(parsed.businessName ?? initialForm.businessName),
+      clientName: String(parsed.clientName ?? initialForm.clientName),
+      projectDescription: String(
+        parsed.projectDescription ?? initialForm.projectDescription
+      ),
+      serviceType: isServiceType(parsed.serviceType)
+        ? parsed.serviceType
+        : initialForm.serviceType,
+      price: String(parsed.price ?? initialForm.price),
+      depositPercent: String(parsed.depositPercent ?? initialForm.depositPercent),
+      timeline: String(parsed.timeline ?? initialForm.timeline),
+      tone: isTone(parsed.tone) ? parsed.tone : initialForm.tone
+    };
+  } catch {
+    return undefined;
+  }
+}
+
+function saveForm(formState: FormState) {
+  try {
+    localStorage.setItem(savedFormKey, JSON.stringify(formState));
+  } catch {
+    // Storage can be unavailable in restricted embeds; the app still works.
+  }
+}
+
+function removeSavedForm() {
+  try {
+    localStorage.removeItem(savedFormKey);
+  } catch {
+    // Storage can be unavailable in restricted embeds; resetting state is enough.
+  }
 }
 
 function toProposalInput(formState: FormState): ProposalInput {
