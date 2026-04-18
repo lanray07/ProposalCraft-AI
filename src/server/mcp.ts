@@ -1,0 +1,296 @@
+import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import {
+  CallToolRequestSchema,
+  ListResourceTemplatesRequestSchema,
+  ListResourcesRequestSchema,
+  ListToolsRequestSchema,
+  ReadResourceRequestSchema,
+  type CallToolRequest,
+  type ListResourceTemplatesRequest,
+  type ListResourcesRequest,
+  type ListToolsRequest,
+  type ReadResourceRequest,
+  type Resource,
+  type ResourceTemplate,
+  type Tool
+} from "@modelcontextprotocol/sdk/types.js";
+import { z } from "zod";
+import {
+  explainProposal,
+  generateProposal,
+  regenerateProposal
+} from "../core/proposal.js";
+import {
+  explainProposalInputSchema,
+  proposalInputSchema,
+  regenerateProposalInputSchema
+} from "../core/validation.js";
+import { getBaseUrl, getWidgetHtml, widgetMimeType, widgetUri } from "./widget.js";
+
+const proposalInputJsonSchema: Tool["inputSchema"] = {
+  type: "object",
+  properties: {
+    businessName: {
+      type: "string",
+      description: "Optional service provider or company name to show in proposal details."
+    },
+    clientName: {
+      type: "string",
+      description: "Optional client name to personalize the proposal title and details."
+    },
+    projectDescription: {
+      type: "string",
+      description:
+        "Plain-language project details such as property type, requested work, size, materials, special requirements, and client priorities."
+    },
+    serviceType: {
+      type: "string",
+      enum: ["landscaping", "paving", "cleaning", "general-contractor"],
+      description: "The reusable service template to apply."
+    },
+    price: {
+      type: "number",
+      minimum: 0,
+      description: "Total proposed price supplied by the user."
+    },
+    depositPercent: {
+      type: "number",
+      minimum: 0,
+      maximum: 100,
+      description:
+        "Optional deposit percentage to calculate a deposit and remaining balance."
+    },
+    timeline: {
+      type: "string",
+      description: "Expected schedule, duration, or start/completion window."
+    },
+    tone: {
+      type: "string",
+      enum: ["formal", "friendly", "premium"],
+      description: "Client-facing tone to use for controlled framing copy."
+    }
+  },
+  required: ["projectDescription", "serviceType", "price", "timeline", "tone"],
+  additionalProperties: false
+};
+
+const regenerateInputJsonSchema: Tool["inputSchema"] = {
+  ...proposalInputJsonSchema,
+  properties: {
+    ...proposalInputJsonSchema.properties,
+    revisionNote: {
+      type: "string",
+      description:
+        "Optional deterministic revision instruction to include as a tracked assumption."
+    }
+  }
+};
+
+const explainInputJsonSchema: Tool["inputSchema"] = {
+  type: "object",
+  properties: {
+    serviceType: {
+      type: "string",
+      enum: ["landscaping", "paving", "cleaning", "general-contractor"]
+    },
+    tone: {
+      type: "string",
+      enum: ["formal", "friendly", "premium"]
+    }
+  },
+  required: ["serviceType"],
+  additionalProperties: false
+};
+
+function descriptorMeta(invoking: string, invoked: string) {
+  return {
+    "openai/outputTemplate": widgetUri,
+    "openai/toolInvocation/invoking": invoking,
+    "openai/toolInvocation/invoked": invoked,
+    "openai/widgetAccessible": true
+  } as const;
+}
+
+function resourceMeta() {
+  const baseUrl = getBaseUrl();
+
+  return {
+    "openai/widgetDescription":
+      "A compact proposal builder for service businesses with form inputs and a copy-ready proposal card.",
+    "openai/widgetPrefersBorder": true,
+    "openai/widgetCSP": {
+      connect_domains: [baseUrl],
+      resource_domains: [baseUrl, "https://esm.sh"]
+    }
+  } as const;
+}
+
+const tools: Tool[] = [
+  {
+    name: "generateProposal",
+    title: "Generate Proposal",
+    description:
+      "Generate a structured, client-ready service proposal from job details, price, timeline, service type, and tone.",
+    inputSchema: proposalInputJsonSchema,
+    _meta: descriptorMeta("Drafting proposal", "Proposal drafted"),
+    annotations: {
+      destructiveHint: false,
+      openWorldHint: false,
+      readOnlyHint: true
+    }
+  },
+  {
+    name: "regenerateProposal",
+    title: "Regenerate Proposal",
+    description:
+      "Regenerate a proposal using the same deterministic template rules, optionally tracking a revision note.",
+    inputSchema: regenerateInputJsonSchema,
+    _meta: descriptorMeta("Regenerating proposal", "Proposal regenerated"),
+    annotations: {
+      destructiveHint: false,
+      openWorldHint: false,
+      readOnlyHint: true
+    }
+  },
+  {
+    name: "explainProposal",
+    title: "Explain Proposal",
+    description:
+      "Explain which template and deterministic rules ProposalCraft AI uses for a proposal.",
+    inputSchema: explainInputJsonSchema,
+    _meta: descriptorMeta("Explaining proposal", "Proposal explained"),
+    annotations: {
+      destructiveHint: false,
+      openWorldHint: false,
+      readOnlyHint: true
+    }
+  }
+];
+
+const resources: Resource[] = [
+  {
+    name: "ProposalCraft AI",
+    uri: widgetUri,
+    description: "ProposalCraft AI React widget",
+    mimeType: widgetMimeType,
+    _meta: resourceMeta()
+  }
+];
+
+const resourceTemplates: ResourceTemplate[] = [
+  {
+    name: "ProposalCraft AI",
+    uriTemplate: widgetUri,
+    description: "ProposalCraft AI React widget template",
+    mimeType: widgetMimeType,
+    _meta: resourceMeta()
+  }
+];
+
+export function createProposalCraftServer(): Server {
+  const server = new Server(
+    {
+      name: "proposalcraft-ai",
+      version: "0.1.0"
+    },
+    {
+      capabilities: {
+        resources: {},
+        tools: {}
+      }
+    }
+  );
+
+  server.setRequestHandler(
+    ListResourcesRequestSchema,
+    async (_request: ListResourcesRequest) => ({ resources })
+  );
+
+  server.setRequestHandler(
+    ReadResourceRequestSchema,
+    async (_request: ReadResourceRequest) => ({
+      contents: [
+        {
+          uri: widgetUri,
+          mimeType: widgetMimeType,
+          text: getWidgetHtml(),
+          _meta: resourceMeta()
+        }
+      ]
+    })
+  );
+
+  server.setRequestHandler(
+    ListResourceTemplatesRequestSchema,
+    async (_request: ListResourceTemplatesRequest) => ({ resourceTemplates })
+  );
+
+  server.setRequestHandler(
+    ListToolsRequestSchema,
+    async (_request: ListToolsRequest) => ({ tools })
+  );
+
+  server.setRequestHandler(
+    CallToolRequestSchema,
+    async (request: CallToolRequest) => callTool(request)
+  );
+
+  return server;
+}
+
+function callTool(request: CallToolRequest) {
+  try {
+    if (request.params.name === "generateProposal") {
+      const args = proposalInputSchema.parse(request.params.arguments ?? {});
+      const proposal = generateProposal(args);
+
+      return {
+        content: [{ type: "text" as const, text: proposal.clientReadyProposal }],
+        structuredContent: { proposal },
+        _meta: descriptorMeta("Drafting proposal", "Proposal drafted")
+      };
+    }
+
+    if (request.params.name === "regenerateProposal") {
+      const args = regenerateProposalInputSchema.parse(
+        request.params.arguments ?? {}
+      );
+      const proposal = regenerateProposal(args);
+
+      return {
+        content: [{ type: "text" as const, text: proposal.clientReadyProposal }],
+        structuredContent: { proposal },
+        _meta: descriptorMeta("Regenerating proposal", "Proposal regenerated")
+      };
+    }
+
+    if (request.params.name === "explainProposal") {
+      const args = explainProposalInputSchema.parse(
+        request.params.arguments ?? {}
+      );
+      const explanation = explainProposal(args.serviceType, args.tone);
+
+      return {
+        content: [{ type: "text" as const, text: explanation.summary }],
+        structuredContent: { explanation },
+        _meta: descriptorMeta("Explaining proposal", "Proposal explained")
+      };
+    }
+  } catch (error) {
+    const message =
+      error instanceof z.ZodError
+        ? error.issues.map((issue) => issue.message).join(" ")
+        : error instanceof Error
+          ? error.message
+          : "Unexpected proposal error.";
+
+    return {
+      isError: true,
+      content: [{ type: "text" as const, text: message }],
+      structuredContent: { error: message },
+      _meta: descriptorMeta("Handling error", "Proposal error")
+    };
+  }
+
+  throw new Error(`Unknown tool: ${request.params.name}`);
+}

@@ -1,0 +1,34 @@
+{
+  "name": "proposalcraft-ai",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "ChatGPT Apps SDK app for generating client-ready service business proposals.",
+  "scripts": {
+    "build": "vite build && tsc -p tsconfig.server.json",
+    "check": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.server.json --noEmit",
+    "dev": "vite --host 0.0.0.0",
+    "dev:mcp": "tsx src/server/http.ts",
+    "preview": "vite preview --host 0.0.0.0",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@vitejs/plugin-react": "^5.0.4",
+    "zod": "^4.1.12",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.7.2",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.9",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

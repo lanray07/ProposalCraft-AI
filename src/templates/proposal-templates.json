@@ -1,0 +1,126 @@
+{
+  "landscaping": {
+    "label": "Landscaping",
+    "overviewLead": "landscape improvement project",
+    "scopeItems": [
+      "Complete a pre-start walkthrough to confirm boundaries, access, measurements, and visible site conditions.",
+      "Protect nearby surfaces, planting areas, paths, and lawn sections that are not part of the agreed work.",
+      "Prepare beds, borders, lawn edges, planting zones, and visible work areas according to the project details.",
+      "Supply labor, standard tools, and agreed materials needed to complete the listed landscaping work.",
+      "Install, shape, tidy, and finish the agreed landscaping elements with attention to drainage, levels, and presentation.",
+      "Complete a final tidy, remove routine green waste, and walk through the finished work with the client."
+    ],
+    "paymentTerms": [
+      "A deposit may be requested to reserve the schedule and cover upfront plant or material costs.",
+      "Progress payments may apply for multi-day work or material-heavy projects.",
+      "Remaining balance is due on practical completion unless different terms are agreed in writing."
+    ],
+    "assumptions": [
+      "Client will provide safe access to outdoor work areas during agreed working hours.",
+      "The proposal assumes normal soil conditions and no concealed waste, rubble, services, or drainage defects.",
+      "Major grading, retaining work, tree surgery, stump grinding, or root removal are excluded unless listed in the project details.",
+      "Plant availability may require like-for-like substitutions of similar quality, size, and style.",
+      "Ongoing watering, plant establishment, and seasonal maintenance remain the client's responsibility unless added as a service."
+    ],
+    "upsells": [
+      "Seasonal maintenance visit",
+      "Mulch or decorative stone refresh",
+      "Irrigation check or watering plan",
+      "Outdoor lighting consultation",
+      "Plant health follow-up visit"
+    ]
+  },
+  "paving": {
+    "label": "Paving",
+    "overviewLead": "paving and hardscape installation",
+    "scopeItems": [
+      "Confirm layout, dimensions, access route, drainage direction, and finish selection before work begins.",
+      "Mark out the work area and protect nearby thresholds, walls, lawns, beds, and existing surfaces where practical.",
+      "Prepare the area, including excavation, disposal, sub-base preparation, and compaction described in the project details.",
+      "Install base layers, edge restraints, bedding, and paving finish using suitable trade methods for the selected surface.",
+      "Cut, align, joint, compact, and finish paving so the completed surface is neat, stable, and ready for normal use.",
+      "Remove routine installation debris and complete a final handover check with the client."
+    ],
+    "paymentTerms": [
+      "A deposit may be required before ordering materials or reserving installation dates.",
+      "A progress payment may be requested once excavation/base preparation is complete on larger projects.",
+      "Final payment is due once installation is complete and the client has received the finished proposal scope."
+    ],
+    "assumptions": [
+      "Quote assumes normal access for materials, tools, and waste removal.",
+      "The existing ground is assumed suitable for standard preparation unless otherwise stated in the project details.",
+      "Drainage changes, retaining work, major excavation, utility relocation, or remedial structural work are excluded unless stated.",
+      "Color variation, texture variation, and minor shade differences in natural or manufactured paving products are expected.",
+      "Client approvals for pattern, border, and finish selection are required before installation begins."
+    ],
+    "upsells": [
+      "Premium sealant application",
+      "Drainage channel installation",
+      "Border or feature pattern upgrade",
+      "Annual clean and reseal service",
+      "Matching step or pathway extension"
+    ]
+  },
+  "cleaning": {
+    "label": "Cleaning",
+    "overviewLead": "professional cleaning service",
+    "scopeItems": [
+      "Confirm property access, priority rooms, surface sensitivities, and any areas that should not be touched before starting.",
+      "Prepare the work area by identifying fragile items, access constraints, and any visible pre-existing damage.",
+      "Complete the cleaning tasks described in the project details using suitable products, equipment, and safe working methods.",
+      "Dust, wipe, vacuum, mop, sanitize, and detail agreed areas according to the selected service level.",
+      "Check completed rooms or work zones for missed items, streaking, residue, or obvious touch-up needs before handover.",
+      "Report access issues, damage noticed on arrival, or out-of-scope requests promptly."
+    ],
+    "paymentTerms": [
+      "Payment is due on completion unless a recurring service agreement is in place.",
+      "Recurring services may be invoiced weekly, biweekly, or monthly by written agreement.",
+      "Cancellations, lockouts, or access issues inside the agreed notice period may be billable."
+    ],
+    "assumptions": [
+      "Client will provide safe access, running water, electricity, and any required entry instructions.",
+      "Hazardous waste, pest activity, biohazards, and specialist restoration are excluded unless agreed separately.",
+      "Heavy furniture moving, appliance disassembly, and high-level exterior work are excluded unless stated in the project details.",
+      "Cleaning results depend on surface age, staining, mineral deposits, wear, and prior product buildup.",
+      "Client will secure valuables, confidential documents, pets, and fragile items before the appointment."
+    ],
+    "upsells": [
+      "Deep clean add-on",
+      "Window cleaning",
+      "Carpet or upholstery cleaning",
+      "Recurring maintenance plan",
+      "Move-in or move-out checklist"
+    ]
+  },
+  "general-contractor": {
+    "label": "General Contractor",
+    "overviewLead": "general contracting project",
+    "scopeItems": [
+      "Confirm the final work area, client requirements, site access, material selections, and schedule before work begins.",
+      "Coordinate labor, standard tools, agreed materials, and any planned trade handoffs needed for the listed work.",
+      "Protect adjacent finishes and occupied areas where practical before active work begins.",
+      "Complete the project tasks described in the job details using appropriate trade practices and manufacturer guidance where applicable.",
+      "Maintain a reasonably tidy and safe work area throughout the project, including routine debris management.",
+      "Walk through completed work with the client and identify any agreed punch-list items before final handover."
+    ],
+    "paymentTerms": [
+      "A deposit or staged payment may be required for scheduling, labor planning, and materials.",
+      "Change orders, added materials, and out-of-scope work must be approved before they are started.",
+      "Final balance is due when the agreed scope is complete unless a written payment schedule says otherwise."
+    ],
+    "assumptions": [
+      "Permits, drawings, engineering, and inspections are excluded unless specifically included in the project details.",
+      "Hidden damage, structural defects, mold, asbestos, or unsafe conditions may require a change order.",
+      "Client decisions, material availability, inspection windows, and third-party delays may affect the final timeline.",
+      "The proposal assumes normal working access, clear work areas, and utilities available during agreed working hours.",
+      "Finish matching depends on available materials, existing conditions, and manufacturer tolerances."
+    ],
+    "upsells": [
+      "Project management and trade coordination",
+      "Material upgrade package",
+      "Post-project maintenance visit",
+      "Extended workmanship check-in",
+      "Detailed punch-list and warranty documentation"
+    ]
+  }
+}
