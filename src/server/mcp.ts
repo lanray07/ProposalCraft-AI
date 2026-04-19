@@ -426,13 +426,32 @@ function callTool(request: CallToolRequest) {
     if (request.params.name === "generateProposal") {
       const args = proposalInputSchema.parse(request.params.arguments ?? {});
       const proposal = generateProposal(args);
+      const pdf = generateProposalPdf(args);
 
       return {
         content: [
           { type: "text" as const, text: proposal.clientReadyProposal },
+          {
+            type: "resource" as const,
+            resource: {
+              uri: `file:///${pdf.filename}`,
+              mimeType: pdf.mimeType,
+              blob: pdf.base64,
+              _meta: {
+                filename: pdf.filename
+              }
+            }
+          },
           widgetResourceContent()
         ],
-        structuredContent: { proposal },
+        structuredContent: {
+          proposal,
+          pdf: {
+            filename: pdf.filename,
+            mimeType: pdf.mimeType,
+            byteLength: pdf.byteLength
+          }
+        },
         _meta: descriptorMeta("Drafting proposal", "Proposal drafted")
       };
     }

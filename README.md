@@ -74,13 +74,15 @@ Price is 4250 with a 30% deposit. Timeline is 4-5 working days.
 Pricing breakdown: Labor 2400, materials 1650, disposal and cleanup 200.
 ```
 
-The tool returns structured content for the widget, a copy-ready formatted proposal in Markdown, a plain-text proposal, optional pricing line items, Good / Better / Best option tiers, next-step copy, a short client email, an approval message, approval/signature copy, and a follow-up email draft.
+The tool returns structured content for the widget, a copy-ready formatted proposal in Markdown, a matching PDF attachment, a plain-text proposal, optional pricing line items, Good / Better / Best option tiers, next-step copy, a short client email, an approval message, approval/signature copy, and a follow-up email draft.
 
 ## Tools
 
 ### `generateProposal`
 
 Creates a proposal from the required job fields.
+
+This also attaches the generated ProposalCraft PDF so ChatGPT clients that have cached an older tool list can still receive the final PDF through the main proposal action.
 
 ### `generateProposalPdf`
 
