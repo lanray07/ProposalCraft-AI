@@ -95,6 +95,7 @@ export function explainProposal(
       "Format pricing from the numeric input without estimating hidden costs.",
       "Include optional pricing breakdown lines only when supplied by the user.",
       "Create Good, Better, and Best options from fixed percentage adjustments.",
+      "Create send-ready client email, approval message, and next-step copy.",
       "Return a fixed client-ready section order."
     ],
     includedSections: [
@@ -106,6 +107,9 @@ export function explainProposal(
       "Payment Terms",
       "Assumptions",
       "Optional Upsells",
+      "Next Steps",
+      "Client Email",
+      "Approval Message",
       "Follow-up Email",
       "Approval"
     ]
@@ -117,22 +121,39 @@ function buildProposal(input: ProposalInput): Proposal {
   const copy = toneCopy[input.tone];
   const cleanedDescription = sentenceCase(input.projectDescription);
   const clientPrefix = input.clientName ? ` for ${input.clientName}` : "";
+  const title = createTitle(template.label, input.clientName);
   const projectOverview = `${copy.greeting} This ${template.overviewLead} covers: ${cleanedDescription} ${copy.promise}`;
   const pricingSummary = `Total proposed price${clientPrefix}: ${formatCurrency(input.price)}. This price is based on the project details provided and the assumptions listed below.`;
   const pricingBreakdown = input.pricingBreakdown ?? [];
   const proposalOptions = createProposalOptions(input.price, template);
   const depositSummary = createDepositSummary(input.price, input.depositPercent);
+  const nextSteps = createNextSteps(Boolean(input.depositPercent));
+  const approvalMessage = createApprovalMessage({
+    proposalTitle: title,
+    price: input.price,
+    depositPercent: input.depositPercent,
+    timeline: input.timeline
+  });
+  const clientEmail = createClientEmail({
+    businessName: input.businessName,
+    clientName: input.clientName,
+    proposalTitle: title,
+    price: input.price,
+    depositPercent: input.depositPercent,
+    timeline: input.timeline,
+    tone: input.tone
+  });
   const followUpEmail = createFollowUpEmail({
     businessName: input.businessName,
     clientName: input.clientName,
-    proposalTitle: createTitle(template.label, input.clientName),
+    proposalTitle: title,
     price: input.price,
     timeline: input.timeline,
     tone: input.tone
   });
 
   const proposal: Proposal = {
-    title: createTitle(template.label, input.clientName),
+    title,
     businessName: input.businessName,
     clientName: input.clientName,
     serviceLabel: template.label,
@@ -148,8 +169,12 @@ function buildProposal(input: ProposalInput): Proposal {
     optionalUpsells: template.upsells,
     proposalOptions,
     approvalText: createApprovalText(copy.close),
+    nextSteps,
+    clientEmail,
+    approvalMessage,
     followUpEmail,
     clientReadyProposal: "",
+    plainTextProposal: "",
     sections: []
   };
 
@@ -185,6 +210,9 @@ function assembleProposal(proposal: Proposal): Proposal {
     },
     { title: "Assumptions", body: proposal.assumptions },
     { title: "Optional Upsells", body: proposal.optionalUpsells },
+    { title: "Next Steps", body: proposal.nextSteps },
+    { title: "Client Email", body: proposal.clientEmail },
+    { title: "Approval Message", body: proposal.approvalMessage },
     { title: "Follow-up Email", body: proposal.followUpEmail },
     { title: "Approval", body: proposal.approvalText }
   ];
@@ -192,7 +220,8 @@ function assembleProposal(proposal: Proposal): Proposal {
   return {
     ...proposal,
     sections,
-    clientReadyProposal: formatClientProposal(proposal.title, sections)
+    clientReadyProposal: formatClientProposal(proposal.title, sections),
+    plainTextProposal: formatPlainTextProposal(proposal.title, sections)
   };
 }
 
@@ -289,6 +318,23 @@ function formatClientProposal(
   return `# ${title}\n\n${body}`;
 }
 
+function formatPlainTextProposal(
+  title: string,
+  sections: Proposal["sections"]
+): string {
+  const body = sections
+    .map((section) => {
+      const content = Array.isArray(section.body)
+        ? section.body.map((item) => `- ${item}`).join("\n")
+        : section.body;
+
+      return `${section.title}\n${content}`;
+    })
+    .join("\n\n");
+
+  return `${title}\n\n${body}`;
+}
+
 function createTitle(serviceLabel: string, clientName?: string): string {
   return clientName
     ? `${serviceLabel} Proposal for ${clientName}`
@@ -320,6 +366,52 @@ function createApprovalText(close: string): string[] {
     "Client approval: ______________________________",
     "Accepted date: ______________________________"
   ];
+}
+
+function createNextSteps(hasDeposit: boolean): string[] {
+  return [
+    "Review the proposal scope, pricing, assumptions, and optional upgrades.",
+    "Confirm acceptance in writing using the approval message below.",
+    hasDeposit
+      ? "Pay the listed deposit to reserve the schedule and begin preparation."
+      : "Confirm the preferred start date or scheduling window.",
+    "Schedule the work and share any access details needed before the start date."
+  ];
+}
+
+function createApprovalMessage(input: {
+  proposalTitle: string;
+  price: number;
+  depositPercent?: number;
+  timeline: string;
+}): string {
+  const depositText = input.depositPercent
+    ? ` I understand the ${input.depositPercent}% deposit is due on approval.`
+    : "";
+
+  return `I approve ${input.proposalTitle} for ${formatCurrency(input.price)} with the expected timeline of ${input.timeline}.${depositText} Please proceed with scheduling.`;
+}
+
+function createClientEmail(input: {
+  businessName?: string;
+  clientName?: string;
+  proposalTitle: string;
+  price: number;
+  depositPercent?: number;
+  timeline: string;
+  tone: Tone;
+}): string {
+  const greeting = input.clientName ? `Hi ${input.clientName},` : "Hi,";
+  const sender = input.businessName ? `\n\n${input.businessName}` : "";
+  const depositText = input.depositPercent
+    ? ` A ${input.depositPercent}% deposit is due on approval.`
+    : "";
+  const premiumLine =
+    input.tone === "premium"
+      ? " It is structured for a clear, polished delivery from approval through handover."
+      : "";
+
+  return `${greeting}\n\nHere is ${input.proposalTitle} for review. The proposed price is ${formatCurrency(input.price)}, and the expected timeline is ${input.timeline}.${depositText}${premiumLine}\n\nIf everything looks good, reply with the approval message included in the proposal and we can move forward with scheduling.${sender}`;
 }
 
 function createFollowUpEmail(input: {

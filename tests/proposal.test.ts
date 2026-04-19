@@ -30,6 +30,9 @@ describe("proposal generation", () => {
       "Payment Terms",
       "Assumptions",
       "Optional Upsells",
+      "Next Steps",
+      "Client Email",
+      "Approval Message",
       "Follow-up Email",
       "Approval"
     ]);
@@ -38,6 +41,11 @@ describe("proposal generation", () => {
     expect(proposal.clientReadyProposal).toContain("## Proposal Options");
     expect(proposal.clientReadyProposal).toContain("Proposal valid for 14 days");
     expect(proposal.clientReadyProposal).toContain("Client approval:");
+    expect(proposal.clientReadyProposal).toContain("## Next Steps");
+    expect(proposal.clientReadyProposal).toContain("## Client Email");
+    expect(proposal.clientReadyProposal).toContain("## Approval Message");
+    expect(proposal.plainTextProposal).toContain("Cleaning Proposal");
+    expect(proposal.plainTextProposal).not.toContain("##");
     expect(proposal.optionalUpsells).toContain("Deep clean add-on");
   });
 
@@ -123,6 +131,12 @@ describe("proposal generation", () => {
     );
     expect(proposal.followUpEmail).toContain("Hi Acme Offices,");
     expect(proposal.followUpEmail).toContain("Bright Finish Cleaning");
+    expect(proposal.clientEmail).toContain("Hi Acme Offices,");
+    expect(proposal.clientEmail).toContain("25% deposit is due on approval");
+    expect(proposal.approvalMessage).toContain("Please proceed with scheduling.");
+    expect(proposal.nextSteps).toContain(
+      "Pay the listed deposit to reserve the schedule and begin preparation."
+    );
   });
 
   it("explains the template rules", () => {

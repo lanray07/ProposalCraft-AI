@@ -74,8 +74,12 @@ export type Proposal = {
   optionalUpsells: string[];
   proposalOptions: ProposalOption[];
   approvalText: string[];
+  nextSteps: string[];
+  clientEmail: string;
+  approvalMessage: string;
   followUpEmail: string;
   clientReadyProposal: string;
+  plainTextProposal: string;
   sections: ProposalSection[];
 };
 
