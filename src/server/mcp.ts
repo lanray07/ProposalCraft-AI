@@ -132,7 +132,8 @@ function descriptorMeta(invoking: string, invoked: string) {
     "openai/outputTemplate": widgetUri,
     "openai/toolInvocation/invoking": invoking,
     "openai/toolInvocation/invoked": invoked,
-    "openai/widgetAccessible": true
+    "openai/widgetAccessible": true,
+    "openai/resultCanProduceWidget": true
   } as const;
 }
 
@@ -286,7 +287,10 @@ function callTool(request: CallToolRequest) {
       const proposal = generateProposal(args);
 
       return {
-        content: [{ type: "text" as const, text: proposal.clientReadyProposal }],
+        content: [
+          { type: "text" as const, text: proposal.clientReadyProposal },
+          widgetResourceContent()
+        ],
         structuredContent: { proposal },
         _meta: descriptorMeta("Drafting proposal", "Proposal drafted")
       };
@@ -299,7 +303,10 @@ function callTool(request: CallToolRequest) {
       const proposal = regenerateProposal(args);
 
       return {
-        content: [{ type: "text" as const, text: proposal.clientReadyProposal }],
+        content: [
+          { type: "text" as const, text: proposal.clientReadyProposal },
+          widgetResourceContent()
+        ],
         structuredContent: { proposal },
         _meta: descriptorMeta("Regenerating proposal", "Proposal regenerated")
       };
@@ -312,7 +319,10 @@ function callTool(request: CallToolRequest) {
       const explanation = explainProposal(args.serviceType, args.tone);
 
       return {
-        content: [{ type: "text" as const, text: explanation.summary }],
+        content: [
+          { type: "text" as const, text: explanation.summary },
+          widgetResourceContent()
+        ],
         structuredContent: { explanation },
         _meta: descriptorMeta("Explaining proposal", "Proposal explained")
       };
@@ -334,4 +344,16 @@ function callTool(request: CallToolRequest) {
   }
 
   throw new Error(`Unknown tool: ${request.params.name}`);
+}
+
+function widgetResourceContent() {
+  return {
+    type: "resource" as const,
+    resource: {
+      uri: widgetUri,
+      mimeType: widgetMimeType,
+      text: getWidgetHtml(),
+      _meta: resourceMeta()
+    }
+  };
 }
