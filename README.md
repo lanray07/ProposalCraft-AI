@@ -9,7 +9,7 @@ ProposalCraft AI is a ChatGPT app built with the OpenAI Apps SDK pattern: a Reac
 - Uses reusable JSON templates for landscaping, paving, cleaning, general contractor, painting, plumbing, electrical, handyman, pressure washing, roofing, HVAC, flooring, remodeling, moving, pest control, pool service, appliance repair, and junk removal jobs.
 - Saves form inputs locally in the browser for faster repeat proposals.
 - Supports copy, Markdown download, PDF attachment generation, print-to-PDF, and follow-up email copy actions.
-- Exposes four ChatGPT proposal tools: `generateProposal`, `generateProposalPdf`, `regenerateProposal`, and `explainProposal`.
+- Exposes five ChatGPT proposal tools: `generateProposal`, `generateProposalPdf`, `downloadProposalPdf`, `regenerateProposal`, and `explainProposal`.
 - Runs locally as a Vite React app and an MCP server, and includes Vercel configuration.
 
 ## Tech Stack
@@ -85,6 +85,10 @@ Creates a proposal from the required job fields.
 ### `generateProposalPdf`
 
 Creates the same proposal and returns a client-ready PDF attachment with branded title styling, section headings, and page footer metadata.
+
+### `downloadProposalPdf`
+
+Returns only the deterministic ProposalCraft PDF attachment metadata and file blob, which is the best tool to use when the user asks to export or download the final proposal as a PDF.
 
 ### `regenerateProposal`
 

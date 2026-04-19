@@ -272,6 +272,19 @@ const tools: Tool[] = [
     }
   },
   {
+    name: "downloadProposalPdf",
+    title: "Download Proposal PDF",
+    description:
+      "Return only the deterministic ProposalCraft PDF attachment for a service proposal, without rewriting or summarizing the proposal text.",
+    inputSchema: proposalInputJsonSchema,
+    _meta: descriptorMeta("Preparing proposal PDF", "Proposal PDF ready"),
+    annotations: {
+      destructiveHint: false,
+      openWorldHint: false,
+      readOnlyHint: true
+    }
+  },
+  {
     name: "regenerateProposal",
     title: "Regenerate Proposal",
     description:
@@ -455,6 +468,39 @@ function callTool(request: CallToolRequest) {
           }
         },
         _meta: descriptorMeta("Creating proposal PDF", "Proposal PDF created")
+      };
+    }
+
+    if (request.params.name === "downloadProposalPdf") {
+      const args = proposalInputSchema.parse(request.params.arguments ?? {});
+      const pdf = generateProposalPdf(args);
+
+      return {
+        content: [
+          {
+            type: "text" as const,
+            text: `Attached ${pdf.filename}.`
+          },
+          {
+            type: "resource" as const,
+            resource: {
+              uri: `file:///${pdf.filename}`,
+              mimeType: pdf.mimeType,
+              blob: pdf.base64,
+              _meta: {
+                filename: pdf.filename
+              }
+            }
+          }
+        ],
+        structuredContent: {
+          pdf: {
+            filename: pdf.filename,
+            mimeType: pdf.mimeType,
+            byteLength: pdf.byteLength
+          }
+        },
+        _meta: descriptorMeta("Preparing proposal PDF", "Proposal PDF ready")
       };
     }
 
