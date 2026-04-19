@@ -11,7 +11,7 @@ describe("widget resource", () => {
   it("uses the current MCP Apps widget resource shape", () => {
     const html = getWidgetHtml();
 
-    expect(widgetUri).toBe("ui://widget/proposalcraft-ai-v4.html");
+    expect(widgetUri).toBe("ui://widget/proposalcraft-ai-v5.html");
     expect(widgetMimeType).toBe("text/html;profile=mcp-app");
     expect(html).toContain("Widget ready");
     expect(html).toContain("ui/notifications/tool-result");
