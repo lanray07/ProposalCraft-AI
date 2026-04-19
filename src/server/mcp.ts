@@ -20,6 +20,7 @@ import {
   generateProposal,
   regenerateProposal
 } from "../core/proposal.js";
+import { generateProposalPdf } from "../core/pdf.js";
 import {
   explainProposalInputSchema,
   proposalInputSchema,
@@ -258,6 +259,19 @@ const tools: Tool[] = [
     }
   },
   {
+    name: "generateProposalPdf",
+    title: "Generate Proposal PDF",
+    description:
+      "Generate a structured service proposal and return a client-ready PDF attachment.",
+    inputSchema: proposalInputJsonSchema,
+    _meta: descriptorMeta("Creating proposal PDF", "Proposal PDF created"),
+    annotations: {
+      destructiveHint: false,
+      openWorldHint: false,
+      readOnlyHint: true
+    }
+  },
+  {
     name: "regenerateProposal",
     title: "Regenerate Proposal",
     description:
@@ -407,6 +421,40 @@ function callTool(request: CallToolRequest) {
         ],
         structuredContent: { proposal },
         _meta: descriptorMeta("Drafting proposal", "Proposal drafted")
+      };
+    }
+
+    if (request.params.name === "generateProposalPdf") {
+      const args = proposalInputSchema.parse(request.params.arguments ?? {});
+      const pdf = generateProposalPdf(args);
+
+      return {
+        content: [
+          {
+            type: "text" as const,
+            text: `Created ${pdf.filename} (${pdf.byteLength} bytes).`
+          },
+          {
+            type: "resource" as const,
+            resource: {
+              uri: `file:///${pdf.filename}`,
+              mimeType: pdf.mimeType,
+              blob: pdf.base64,
+              _meta: {
+                filename: pdf.filename
+              }
+            }
+          }
+        ],
+        structuredContent: {
+          proposal: pdf.proposal,
+          pdf: {
+            filename: pdf.filename,
+            mimeType: pdf.mimeType,
+            byteLength: pdf.byteLength
+          }
+        },
+        _meta: descriptorMeta("Creating proposal PDF", "Proposal PDF created")
       };
     }
 
