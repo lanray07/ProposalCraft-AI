@@ -1,4 +1,5 @@
 export const widgetUri = "ui://widget/proposalcraft-ai-v5.html";
+export const debugWidgetUri = "ui://widget/proposalcraft-debug-v1.html";
 export const widgetMimeType = "text/html;profile=mcp-app";
 
 export function getBaseUrl(): string {
@@ -62,5 +63,15 @@ export function getWidgetHtml(): string {
         renderProposal(readProposal(message.params));
       }, { passive: true });
     </script>
+  `.trim();
+}
+
+export function getDebugWidgetHtml(): string {
+  return `
+    <div style="min-height: 260px; padding: 28px; background: #f7f8f4; color: #17201b; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+      <p style="margin: 0 0 8px; color: #51685a; font-size: 12px; font-weight: 700; text-transform: uppercase;">ProposalCraft AI</p>
+      <h1 style="margin: 0 0 12px; font-size: 28px; line-height: 1.1;">Debug widget loaded</h1>
+      <p style="margin: 0; max-width: 560px; line-height: 1.5;">This card is served directly from the ProposalCraft MCP resource response. If you can read this, the ChatGPT widget resource path is working.</p>
+    </div>
   `.trim();
 }

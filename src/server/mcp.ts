@@ -25,7 +25,14 @@ import {
   proposalInputSchema,
   regenerateProposalInputSchema
 } from "../core/validation.js";
-import { getBaseUrl, getWidgetHtml, widgetMimeType, widgetUri } from "./widget.js";
+import {
+  debugWidgetUri,
+  getBaseUrl,
+  getDebugWidgetHtml,
+  getWidgetHtml,
+  widgetMimeType,
+  widgetUri
+} from "./widget.js";
 
 const proposalInputJsonSchema: Tool["inputSchema"] = {
   type: "object",
@@ -124,12 +131,12 @@ const explainInputJsonSchema: Tool["inputSchema"] = {
   additionalProperties: false
 };
 
-function descriptorMeta(invoking: string, invoked: string) {
+function descriptorMeta(invoking: string, invoked: string, resourceUri = widgetUri) {
   return {
     ui: {
-      resourceUri: widgetUri
+      resourceUri
     },
-    "openai/outputTemplate": widgetUri,
+    "openai/outputTemplate": resourceUri,
     "openai/toolInvocation/invoking": invoking,
     "openai/toolInvocation/invoked": invoked,
     "openai/widgetAccessible": true,
@@ -206,6 +213,23 @@ const tools: Tool[] = [
       openWorldHint: false,
       readOnlyHint: true
     }
+  },
+  {
+    name: "debugWidget",
+    title: "Show Debug Widget",
+    description:
+      "Render a minimal hardcoded ProposalCraft widget to verify ChatGPT can load the app resource.",
+    inputSchema: {
+      type: "object",
+      properties: {},
+      additionalProperties: false
+    },
+    _meta: descriptorMeta("Loading debug widget", "Debug widget loaded", debugWidgetUri),
+    annotations: {
+      destructiveHint: false,
+      openWorldHint: false,
+      readOnlyHint: true
+    }
   }
 ];
 
@@ -216,6 +240,13 @@ const resources: Resource[] = [
     description: "ProposalCraft AI React widget",
     mimeType: widgetMimeType,
     _meta: resourceMeta()
+  },
+  {
+    name: "ProposalCraft AI Debug",
+    uri: debugWidgetUri,
+    description: "Minimal ProposalCraft AI debug widget",
+    mimeType: widgetMimeType,
+    _meta: resourceMeta()
   }
 ];
 
@@ -224,6 +255,13 @@ const resourceTemplates: ResourceTemplate[] = [
     name: "ProposalCraft AI",
     uriTemplate: widgetUri,
     description: "ProposalCraft AI React widget template",
+    mimeType: widgetMimeType,
+    _meta: resourceMeta()
+  },
+  {
+    name: "ProposalCraft AI Debug",
+    uriTemplate: debugWidgetUri,
+    description: "Minimal ProposalCraft AI debug widget template",
     mimeType: widgetMimeType,
     _meta: resourceMeta()
   }
@@ -250,16 +288,23 @@ export function createProposalCraftServer(): Server {
 
   server.setRequestHandler(
     ReadResourceRequestSchema,
-    async (_request: ReadResourceRequest) => ({
-      contents: [
-        {
-          uri: widgetUri,
-          mimeType: widgetMimeType,
-          text: getWidgetHtml(),
-          _meta: resourceMeta()
-        }
-      ]
-    })
+    async (request: ReadResourceRequest) => {
+      const requestedUri = request.params.uri;
+
+      return {
+        contents: [
+          {
+            uri: requestedUri,
+            mimeType: widgetMimeType,
+            text:
+              requestedUri === debugWidgetUri
+                ? getDebugWidgetHtml()
+                : getWidgetHtml(),
+            _meta: resourceMeta()
+          }
+        ]
+      };
+    }
   );
 
   server.setRequestHandler(
@@ -327,6 +372,26 @@ function callTool(request: CallToolRequest) {
         _meta: descriptorMeta("Explaining proposal", "Proposal explained")
       };
     }
+
+    if (request.params.name === "debugWidget") {
+      return {
+        content: [
+          {
+            type: "text" as const,
+            text: "Showing the ProposalCraft AI debug widget."
+          },
+          widgetResourceContent(debugWidgetUri)
+        ],
+        structuredContent: {
+          message: "ProposalCraft AI debug widget should be visible."
+        },
+        _meta: descriptorMeta(
+          "Loading debug widget",
+          "Debug widget loaded",
+          debugWidgetUri
+        )
+      };
+    }
   } catch (error) {
     const message =
       error instanceof z.ZodError
@@ -346,13 +411,13 @@ function callTool(request: CallToolRequest) {
   throw new Error(`Unknown tool: ${request.params.name}`);
 }
 
-function widgetResourceContent() {
+function widgetResourceContent(resourceUri = widgetUri) {
   return {
     type: "resource" as const,
     resource: {
-      uri: widgetUri,
+      uri: resourceUri,
       mimeType: widgetMimeType,
-      text: getWidgetHtml(),
+      text: resourceUri === debugWidgetUri ? getDebugWidgetHtml() : getWidgetHtml(),
       _meta: resourceMeta()
     }
   };
