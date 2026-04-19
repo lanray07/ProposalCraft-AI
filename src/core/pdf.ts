@@ -30,7 +30,7 @@ const bodySize = 10;
 const headingSize = 12;
 const maxBodyCharacters = 86;
 const maxHeadingCharacters = 58;
-const maxTitleCharacters = 32;
+const maxTitleCharacters = 36;
 
 export function generateProposalPdf(input: ProposalInput): ProposalPdfFile {
   const proposal = generateProposal(input);
@@ -328,6 +328,9 @@ function createCoverHeaderCommands(proposal: Proposal): string[] {
   const total = proposal.proposalOptions[0]?.price ?? 0;
   const preparedFor = details.preparedFor ?? "Client";
   const preparedBy = details.preparedBy ?? proposal.businessName ?? "ProposalCraft AI";
+  const titleLines = wrapHeaderTitle(proposal.title);
+  const metaY = titleLines.length > 1 ? 690 : 704;
+  const contactY = titleLines.length > 1 ? 672 : 686;
   const contactLine = [
     details.contactName,
     details.phone,
@@ -343,16 +346,23 @@ function createCoverHeaderCommands(proposal: Proposal): string[] {
     colorCommand("white"),
     "/F2 25 Tf",
     "54 727 Td",
-    `(${escapePdfText(trimForPdf(proposal.title, maxTitleCharacters))}) Tj`,
+    `(${escapePdfText(titleLines[0])}) Tj`,
     "-54 -727 Td",
+    ...(titleLines[1]
+      ? [
+          "54 700 Td",
+          `(${escapePdfText(titleLines[1])}) Tj`,
+          "-54 -700 Td"
+        ]
+      : []),
     "/F1 10 Tf",
-    "54 704 Td",
+    `54 ${metaY} Td`,
     `(${escapePdfText(`${preparedBy} | Prepared for ${preparedFor}`)}) Tj`,
-    "-54 -704 Td",
+    `-54 -${metaY} Td`,
     "/F1 9 Tf",
-    "54 686 Td",
+    `54 ${contactY} Td`,
     `(${escapePdfText(contactLine || `Prepared ${details.preparedDate}`)}) Tj`,
-    "-54 -686 Td",
+    `-54 -${contactY} Td`,
     "/F2 9 Tf",
     "54 655 Td",
     `(TOTAL) Tj`,
@@ -381,6 +391,44 @@ function createCoverHeaderCommands(proposal: Proposal): string[] {
     "0.93 0.95 0.92 RG",
     "54 604 m 558 604 l S"
   ];
+}
+
+function wrapHeaderTitle(title: string): string[] {
+  const clean = sanitizePdfText(title);
+
+  if (!clean || clean.length <= maxTitleCharacters) {
+    return [clean];
+  }
+
+  const words = clean.split(/\s+/);
+  const lines: string[] = [];
+  let current = "";
+
+  for (const word of words) {
+    const next = current ? `${current} ${word}` : word;
+
+    if (next.length <= maxTitleCharacters) {
+      current = next;
+      continue;
+    }
+
+    if (current) {
+      lines.push(current);
+    }
+    current = word;
+
+    if (lines.length === 1) {
+      continue;
+    }
+
+    break;
+  }
+
+  if (current) {
+    lines.push(current);
+  }
+
+  return lines.slice(0, 2);
 }
 
 function colorCommand(color: PdfColor): string {
