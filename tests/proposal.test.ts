@@ -26,6 +26,7 @@ describe("proposal generation", () => {
       "Scope of Work",
       "Timeline",
       "Pricing Summary",
+      "Proposal Options",
       "Payment Terms",
       "Assumptions",
       "Optional Upsells",
@@ -34,7 +35,25 @@ describe("proposal generation", () => {
     ]);
     expect(proposal.pricingSummary).toContain("$680");
     expect(proposal.clientReadyProposal).toContain("## Scope of Work");
+    expect(proposal.clientReadyProposal).toContain("## Proposal Options");
     expect(proposal.optionalUpsells).toContain("Deep clean add-on");
+  });
+
+  it("adds deterministic good better best proposal options", () => {
+    const proposal = generateProposal(baseInput);
+
+    expect(proposal.proposalOptions.map((option) => option.name)).toEqual([
+      "Good",
+      "Better",
+      "Best"
+    ]);
+    expect(proposal.proposalOptions.map((option) => option.price)).toEqual([
+      680,
+      782,
+      884
+    ]);
+    expect(proposal.proposalOptions[1].includes).toContain("Deep clean add-on");
+    expect(proposal.proposalOptions[2].includes).toContain("Window cleaning");
   });
 
   it("rejects invalid project details", () => {

@@ -5,7 +5,7 @@ ProposalCraft AI is a ChatGPT app built with the OpenAI Apps SDK pattern: a Reac
 ## What It Does
 
 - Collects business name, client name, project description, service type, price, deposit percentage, timeline, and tone.
-- Generates a fixed proposal structure with overview, scope, timeline, pricing, payment terms, assumptions, upsells, follow-up email, and approval copy.
+- Generates a fixed proposal structure with overview, scope, timeline, pricing, Good / Better / Best options, payment terms, assumptions, upsells, follow-up email, and approval copy.
 - Uses reusable JSON templates for landscaping, paving, cleaning, general contractor, painting, plumbing, electrical, handyman, pressure washing, and roofing jobs.
 - Saves form inputs locally in the browser for faster repeat proposals.
 - Supports copy, Markdown download, print-to-PDF, and follow-up email copy actions.
@@ -71,7 +71,7 @@ Prepared by Greenline Outdoor Works for Jordan Smith.
 Price is 4250 with a 30% deposit. Timeline is 4-5 working days.
 ```
 
-The tool returns structured content for the widget, a copy-ready formatted proposal in Markdown, and a follow-up email draft.
+The tool returns structured content for the widget, a copy-ready formatted proposal in Markdown, Good / Better / Best option tiers, and a follow-up email draft.
 
 ## Tools
 

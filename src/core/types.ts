@@ -36,6 +36,13 @@ export type ProposalSection = {
   body: string | string[];
 };
 
+export type ProposalOption = {
+  name: string;
+  price: number;
+  summary: string;
+  includes: string[];
+};
+
 export type Proposal = {
   title: string;
   businessName?: string;
@@ -50,6 +57,7 @@ export type Proposal = {
   paymentTerms: string[];
   assumptions: string[];
   optionalUpsells: string[];
+  proposalOptions: ProposalOption[];
   followUpEmail: string;
   clientReadyProposal: string;
   sections: ProposalSection[];

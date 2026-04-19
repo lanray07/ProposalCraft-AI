@@ -3,6 +3,7 @@ import {
   type Proposal,
   type ProposalExplanation,
   type ProposalInput,
+  type ProposalOption,
   type RegenerateProposalInput,
   type ServiceTemplate,
   type ServiceType,
@@ -91,6 +92,7 @@ export function explainProposal(
       "Use the selected service template for scope, assumptions, terms, and upsells.",
       "Apply tone only to the overview and closing language.",
       "Format pricing from the numeric input without estimating hidden costs.",
+      "Create Good, Better, and Best options from fixed percentage adjustments.",
       "Return a fixed client-ready section order."
     ],
     includedSections: [
@@ -98,6 +100,7 @@ export function explainProposal(
       "Scope of Work",
       "Timeline",
       "Pricing Summary",
+      "Proposal Options",
       "Payment Terms",
       "Assumptions",
       "Optional Upsells",
@@ -114,6 +117,7 @@ function buildProposal(input: ProposalInput): Proposal {
   const clientPrefix = input.clientName ? ` for ${input.clientName}` : "";
   const projectOverview = `${copy.greeting} This ${template.overviewLead} covers: ${cleanedDescription} ${copy.promise}`;
   const pricingSummary = `Total proposed price${clientPrefix}: ${formatCurrency(input.price)}. This price is based on the project details provided and the assumptions listed below.`;
+  const proposalOptions = createProposalOptions(input.price, template);
   const depositSummary = createDepositSummary(input.price, input.depositPercent);
   const followUpEmail = createFollowUpEmail({
     businessName: input.businessName,
@@ -138,6 +142,7 @@ function buildProposal(input: ProposalInput): Proposal {
     paymentTerms: template.paymentTerms,
     assumptions: template.assumptions,
     optionalUpsells: template.upsells,
+    proposalOptions,
     followUpEmail,
     clientReadyProposal: "",
     sections: []
@@ -164,6 +169,10 @@ function assembleProposal(proposal: Proposal): Proposal {
     { title: "Timeline", body: proposal.timeline },
     { title: "Pricing Summary", body: proposal.pricingSummary },
     {
+      title: "Proposal Options",
+      body: formatProposalOptions(proposal.proposalOptions)
+    },
+    {
       title: "Payment Terms",
       body: proposal.depositSummary
         ? [proposal.depositSummary, ...proposal.paymentTerms]
@@ -184,6 +193,55 @@ function assembleProposal(proposal: Proposal): Proposal {
 
 function createScope(template: ServiceTemplate, description: string): string[] {
   return [`Project-specific work: ${description}`, ...template.scopeItems];
+}
+
+function createProposalOptions(
+  basePrice: number,
+  template: ServiceTemplate
+): ProposalOption[] {
+  const firstUpsell = template.upsells[0] ?? "Priority scheduling";
+  const secondUpsell = template.upsells[1] ?? "Premium materials or products";
+  const thirdUpsell = template.upsells[2] ?? "Follow-up quality check";
+
+  return [
+    {
+      name: "Good",
+      price: basePrice,
+      summary: "Core scope exactly as proposed.",
+      includes: [
+        "Agreed project-specific work",
+        "Standard preparation and completion",
+        "Routine cleanup and handover"
+      ]
+    },
+    {
+      name: "Better",
+      price: roundMoney(basePrice * 1.15),
+      summary: "Recommended option with added finish and convenience.",
+      includes: [
+        "Everything in Good",
+        firstUpsell,
+        "Priority scheduling where available"
+      ]
+    },
+    {
+      name: "Best",
+      price: roundMoney(basePrice * 1.3),
+      summary: "Premium option with the strongest handoff package.",
+      includes: [
+        "Everything in Better",
+        secondUpsell,
+        thirdUpsell
+      ]
+    }
+  ];
+}
+
+function formatProposalOptions(options: ProposalOption[]): string[] {
+  return options.map(
+    (option) =>
+      `${option.name} - ${formatCurrency(option.price)}: ${option.summary} Includes ${option.includes.join("; ")}.`
+  );
 }
 
 function formatClientProposal(
@@ -221,6 +279,10 @@ function createDepositSummary(
   const balance = price - depositAmount;
 
   return `${depositPercent}% deposit due on approval: ${formatCurrency(depositAmount)}. Estimated remaining balance: ${formatCurrency(balance)}.`;
+}
+
+function roundMoney(value: number): number {
+  return Math.round(value * 100) / 100;
 }
 
 function createFollowUpEmail(input: {
