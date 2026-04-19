@@ -5,6 +5,7 @@ import {
   generateProposal,
   regenerateProposal
 } from "../core/proposal";
+import { generateProposalPdf } from "../core/pdf";
 import {
   type Proposal,
   type ProposalInput,
@@ -137,6 +138,16 @@ function App() {
       }
 
       setExplanation(explainProposal(form.serviceType, form.tone).summary);
+    } catch (toolError) {
+      setError(toErrorMessage(toolError));
+    }
+  }
+
+  function handleDownloadPdf() {
+    setError("");
+
+    try {
+      downloadProposalPdf(toProposalInput(form));
     } catch (toolError) {
       setError(toErrorMessage(toolError));
     }
@@ -402,6 +413,14 @@ function App() {
             <button
               type="button"
               className="ghost"
+              onClick={handleDownloadPdf}
+              disabled={!canGenerate}
+            >
+              Download PDF
+            </button>
+            <button
+              type="button"
+              className="ghost"
               onClick={() => {
                 setForm(initialForm);
                 setProposal(undefined);
@@ -420,12 +439,18 @@ function App() {
         {explanation ? <p className="explanation">{explanation}</p> : null}
       </section>
 
-      <ProposalCard proposal={proposal} />
+      <ProposalCard proposal={proposal} onDownloadPdf={handleDownloadPdf} />
     </main>
   );
 }
 
-function ProposalCard({ proposal }: { proposal?: Proposal }) {
+function ProposalCard({
+  proposal,
+  onDownloadPdf
+}: {
+  proposal?: Proposal;
+  onDownloadPdf: () => void;
+}) {
   const [copyStatus, setCopyStatus] = useState("");
   const [emailStatus, setEmailStatus] = useState("");
 
@@ -466,9 +491,9 @@ function ProposalCard({ proposal }: { proposal?: Proposal }) {
             className="download"
             onClick={() => downloadProposal(proposal)}
           >
-            Download
+            Markdown
           </button>
-          <button type="button" className="print" onClick={() => window.print()}>
+          <button type="button" className="print" onClick={onDownloadPdf}>
             PDF
           </button>
           <button
@@ -722,6 +747,33 @@ function downloadProposal(proposal: Proposal) {
   link.click();
   link.remove();
   URL.revokeObjectURL(url);
+}
+
+function downloadProposalPdf(input: ProposalInput) {
+  const pdf = generateProposalPdf(input);
+  const buffer = base64ToArrayBuffer(pdf.base64);
+  const blob = new Blob([buffer], { type: pdf.mimeType });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.download = pdf.filename;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function base64ToArrayBuffer(value: string): ArrayBuffer {
+  const binary = window.atob(value);
+  const buffer = new ArrayBuffer(binary.length);
+  const bytes = new Uint8Array(buffer);
+
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index);
+  }
+
+  return buffer;
 }
 
 function slugify(value: string): string {
