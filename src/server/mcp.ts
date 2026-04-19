@@ -62,7 +62,15 @@ const proposalInputJsonSchema: Tool["inputSchema"] = {
         "electrical",
         "handyman",
         "pressure-washing",
-        "roofing"
+        "roofing",
+        "hvac",
+        "flooring",
+        "remodeling",
+        "moving",
+        "pest-control",
+        "pool-service",
+        "appliance-repair",
+        "junk-removal"
       ],
       description: "The reusable service template to apply."
     },
@@ -119,7 +127,15 @@ const explainInputJsonSchema: Tool["inputSchema"] = {
         "electrical",
         "handyman",
         "pressure-washing",
-        "roofing"
+        "roofing",
+        "hvac",
+        "flooring",
+        "remodeling",
+        "moving",
+        "pest-control",
+        "pool-service",
+        "appliance-repair",
+        "junk-removal"
       ]
     },
     tone: {

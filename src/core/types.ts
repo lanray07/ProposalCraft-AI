@@ -8,7 +8,15 @@ export const serviceTypes = [
   "electrical",
   "handyman",
   "pressure-washing",
-  "roofing"
+  "roofing",
+  "hvac",
+  "flooring",
+  "remodeling",
+  "moving",
+  "pest-control",
+  "pool-service",
+  "appliance-repair",
+  "junk-removal"
 ] as const;
 
 export const tones = ["formal", "friendly", "premium"] as const;
@@ -58,6 +66,7 @@ export type Proposal = {
   assumptions: string[];
   optionalUpsells: string[];
   proposalOptions: ProposalOption[];
+  approvalText: string[];
   followUpEmail: string;
   clientReadyProposal: string;
   sections: ProposalSection[];

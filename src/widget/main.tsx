@@ -36,7 +36,15 @@ const serviceLabels: Record<ServiceType, string> = {
   electrical: "Electrical",
   handyman: "Handyman",
   "pressure-washing": "Pressure washing",
-  roofing: "Roofing"
+  roofing: "Roofing",
+  hvac: "HVAC",
+  flooring: "Flooring",
+  remodeling: "Remodeling",
+  moving: "Moving",
+  "pest-control": "Pest control",
+  "pool-service": "Pool service",
+  "appliance-repair": "Appliance repair",
+  "junk-removal": "Junk removal"
 };
 
 const toneLabels: Record<Tone, string> = {

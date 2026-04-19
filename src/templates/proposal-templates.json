@@ -302,5 +302,245 @@
       "Moss or algae treatment",
       "Photo documentation report"
     ]
+  },
+  "hvac": {
+    "label": "HVAC",
+    "overviewLead": "heating, ventilation, and cooling service project",
+    "scopeItems": [
+      "Confirm equipment type, thermostat location, access, airflow concerns, and client priorities before work begins.",
+      "Protect nearby flooring, walls, fixtures, and occupied areas where practical.",
+      "Inspect visible equipment, connections, filters, vents, and service access related to the agreed work.",
+      "Complete the listed HVAC repair, maintenance, replacement, installation, or adjustment using suitable trade practices.",
+      "Test basic system operation, airflow, thermostat response, and visible connections before handover.",
+      "Review completed work, maintenance recommendations, and any observed follow-up items with the client."
+    ],
+    "paymentTerms": [
+      "A deposit may be requested for scheduled installs, replacement equipment, or special-order parts.",
+      "Additional repairs, code-required upgrades, or hidden defects require approval before work continues.",
+      "Final payment is due once the agreed HVAC scope has been completed and basic operation is checked."
+    ],
+    "assumptions": [
+      "Quote assumes safe access to equipment, electrical service, thermostat wiring, and affected rooms.",
+      "Duct redesign, electrical upgrades, refrigerant recovery, permit fees, or structural access work are excluded unless stated.",
+      "System performance depends on existing ductwork, insulation, equipment age, building conditions, and maintenance history.",
+      "Client will provide access to indoor and outdoor units during agreed working hours."
+    ],
+    "upsells": [
+      "Seasonal maintenance plan",
+      "Smart thermostat installation",
+      "Filter replacement package",
+      "Indoor air quality add-on",
+      "Duct inspection or cleaning"
+    ]
+  },
+  "flooring": {
+    "label": "Flooring",
+    "overviewLead": "flooring installation or repair project",
+    "scopeItems": [
+      "Confirm flooring type, layout, transitions, room access, subfloor condition, and finish direction before work begins.",
+      "Protect adjacent finishes, baseboards, thresholds, and areas outside the agreed work zone where practical.",
+      "Prepare agreed surfaces through routine clearing, cleaning, minor leveling, and layout planning described in the project details.",
+      "Install, repair, refinish, or replace the listed flooring materials using suitable trade methods.",
+      "Fit trims, transitions, and visible edges included in the agreed scope.",
+      "Remove routine installation debris and complete a final walkthrough with the client."
+    ],
+    "paymentTerms": [
+      "A deposit may be required before ordering flooring, trim, adhesive, underlay, or specialty materials.",
+      "Progress payments may apply for multi-room or multi-day flooring projects.",
+      "Final payment is due when the agreed flooring scope is complete."
+    ],
+    "assumptions": [
+      "Quote assumes normal subfloor conditions and clear access to the work areas.",
+      "Major subfloor repair, moisture remediation, asbestos handling, baseboard replacement, or door trimming are excluded unless stated.",
+      "Color, grain, batch, and texture variation may occur in natural or manufactured flooring products.",
+      "Client will remove fragile items and confirm final material selections before ordering."
+    ],
+    "upsells": [
+      "Premium underlayment upgrade",
+      "Baseboard or trim refresh",
+      "Furniture moving add-on",
+      "Moisture barrier upgrade",
+      "Care and maintenance kit"
+    ]
+  },
+  "remodeling": {
+    "label": "Remodeling",
+    "overviewLead": "remodeling and improvement project",
+    "scopeItems": [
+      "Confirm final design intent, finish selections, access, work areas, and schedule before work begins.",
+      "Protect adjacent occupied areas, finishes, pathways, and surfaces where practical.",
+      "Coordinate standard labor, materials, tools, and trade handoffs needed for the listed remodeling scope.",
+      "Complete agreed demolition, preparation, installation, finishing, and adjustment tasks described in the project details.",
+      "Maintain routine debris control and a reasonably safe work area during active work.",
+      "Walk through completed work with the client and document any agreed punch-list items."
+    ],
+    "paymentTerms": [
+      "A deposit or staged payment schedule may be required for materials, scheduling, and labor planning.",
+      "Change orders, upgraded materials, and added work must be approved before they are started.",
+      "Final balance is due when the agreed remodeling scope is complete unless otherwise agreed in writing."
+    ],
+    "assumptions": [
+      "Permits, drawings, engineering, inspections, and design services are excluded unless specifically included.",
+      "Hidden damage, structural defects, mold, asbestos, plumbing/electrical issues, or unsafe conditions may require a change order.",
+      "Timeline may depend on client approvals, material availability, inspection windows, and third-party trade schedules.",
+      "Finish matching depends on existing conditions, available materials, and manufacturer tolerances."
+    ],
+    "upsells": [
+      "Design consultation",
+      "Material upgrade package",
+      "Detailed punch-list management",
+      "Post-project deep clean",
+      "Warranty documentation package"
+    ]
+  },
+  "moving": {
+    "label": "Moving",
+    "overviewLead": "moving and relocation service",
+    "scopeItems": [
+      "Confirm pickup and delivery addresses, access, inventory, stairs/elevators, parking, and timing before move day.",
+      "Protect routine traffic areas, doorways, and handled items where practical.",
+      "Load, transport, and unload agreed items using suitable moving methods for normal household or business contents.",
+      "Place items in designated rooms or areas according to client direction.",
+      "Track visible pre-existing damage or access issues noticed during the move.",
+      "Complete a final walkthrough to confirm listed items have been delivered or staged."
+    ],
+    "paymentTerms": [
+      "A deposit may be requested to reserve the moving date and crew.",
+      "Additional time, extra stops, packing materials, or unlisted items may be billable with approval.",
+      "Final payment is due on completion of the agreed moving scope."
+    ],
+    "assumptions": [
+      "Client will provide accurate inventory, safe access, and any building rules before move day.",
+      "Specialty items, pianos, safes, hoisting, long carries, or storage fees are excluded unless listed.",
+      "Client will pack personal items unless packing services are included.",
+      "Weather, traffic, elevator availability, parking restrictions, and building access may affect timing."
+    ],
+    "upsells": [
+      "Packing service",
+      "Packing materials bundle",
+      "Furniture disassembly and reassembly",
+      "Storage coordination",
+      "Post-move cleanup"
+    ]
+  },
+  "pest-control": {
+    "label": "Pest Control",
+    "overviewLead": "pest control service",
+    "scopeItems": [
+      "Confirm pest activity, affected areas, access, safety concerns, and client observations before service begins.",
+      "Inspect visible entry points, activity areas, moisture sources, and conditions related to the agreed treatment.",
+      "Apply agreed treatment, exclusion, trapping, baiting, or monitoring methods according to the service details.",
+      "Use appropriate products, equipment, and safety practices for the listed pest concern.",
+      "Review visible findings, preparation needs, and follow-up recommendations with the client.",
+      "Document routine service notes and any areas requiring monitoring or repeat treatment."
+    ],
+    "paymentTerms": [
+      "Payment is due on completion unless a recurring pest plan is in place.",
+      "Recurring service plans may be billed monthly, quarterly, or by written agreement.",
+      "Additional pests, severe infestations, or structural exclusion work may require a separate quote."
+    ],
+    "assumptions": [
+      "Client will provide access to affected areas and follow preparation or re-entry instructions.",
+      "Results depend on sanitation, building conditions, neighboring activity, weather, and client follow-through.",
+      "Structural repairs, insulation removal, biohazard cleanup, and wildlife relocation are excluded unless stated.",
+      "Follow-up visits may be required depending on pest type, lifecycle, and activity level."
+    ],
+    "upsells": [
+      "Quarterly prevention plan",
+      "Entry point sealing",
+      "Moisture or sanitation recommendations",
+      "Rodent monitoring stations",
+      "Follow-up inspection"
+    ]
+  },
+  "pool-service": {
+    "label": "Pool Service",
+    "overviewLead": "pool maintenance or repair service",
+    "scopeItems": [
+      "Confirm pool type, equipment access, water condition, service history, and client priorities before work begins.",
+      "Inspect visible pool surfaces, water level, equipment, skimmers, filters, and circulation components related to the service.",
+      "Complete agreed cleaning, chemical balancing, maintenance, repair, opening, or closing tasks.",
+      "Use suitable pool products, tools, and testing methods for the listed scope.",
+      "Check visible operation of serviced equipment and note any observed follow-up needs.",
+      "Review service findings, chemical notes, and client care recommendations before handover."
+    ],
+    "paymentTerms": [
+      "Payment is due on completion unless recurring pool service terms are agreed.",
+      "A deposit may be requested for parts, equipment, opening, closing, or repair work.",
+      "Additional chemicals, parts, leak diagnosis, or equipment repairs may require approval before proceeding."
+    ],
+    "assumptions": [
+      "Client will provide safe access to the pool, equipment area, water source, and electrical controls.",
+      "Water clarity results depend on starting condition, weather, filtration, chemical history, and bather load.",
+      "Leak repair, resurfacing, electrical work, major plumbing repair, and equipment replacement are excluded unless stated.",
+      "Service timing may depend on weather, water condition, and equipment functionality."
+    ],
+    "upsells": [
+      "Weekly maintenance plan",
+      "Filter cleaning",
+      "Equipment inspection",
+      "Opening or closing package",
+      "Salt system check"
+    ]
+  },
+  "appliance-repair": {
+    "label": "Appliance Repair",
+    "overviewLead": "appliance repair service",
+    "scopeItems": [
+      "Confirm appliance type, model details, symptoms, access, and prior troubleshooting before work begins.",
+      "Inspect visible appliance components, connections, controls, and installation conditions related to the reported issue.",
+      "Complete agreed diagnosis, repair, replacement, adjustment, or installation tasks using suitable service methods.",
+      "Supply standard labor and parts listed in the project details or approved before installation.",
+      "Test basic appliance operation after service where safe and practical.",
+      "Review completed work, care notes, and any recommended next steps with the client."
+    ],
+    "paymentTerms": [
+      "Diagnostic fees may be due at the visit and may be credited toward approved repair work if stated.",
+      "A deposit may be requested for special-order parts.",
+      "Final payment is due once the approved appliance service is complete."
+    ],
+    "assumptions": [
+      "Quote assumes safe access, available utilities, and normal installation conditions.",
+      "Hidden wiring, plumbing, cabinetry, flooring, manufacturer defects, or discontinued parts may affect repair options.",
+      "Parts availability, model age, and manufacturer support may affect timeline and final cost.",
+      "Client will clear access around the appliance before the appointment."
+    ],
+    "upsells": [
+      "Preventive maintenance service",
+      "Filter or hose replacement",
+      "Appliance installation check",
+      "Extended service visit",
+      "Multi-appliance inspection"
+    ]
+  },
+  "junk-removal": {
+    "label": "Junk Removal",
+    "overviewLead": "junk removal and hauling service",
+    "scopeItems": [
+      "Confirm item list, volume, access, stairs/elevators, parking, and disposal requirements before work begins.",
+      "Protect routine traffic areas and surrounding surfaces where practical during removal.",
+      "Load, haul, and dispose of agreed non-hazardous items according to the project details.",
+      "Separate donation, recycling, and disposal items where practical and agreed.",
+      "Sweep or tidy the immediate cleared area after routine removal work.",
+      "Confirm completion with the client before leaving the site."
+    ],
+    "paymentTerms": [
+      "Payment is due on completion unless commercial or recurring terms are agreed.",
+      "A deposit may be requested for large cleanouts, reserved crew time, or disposal-heavy jobs.",
+      "Additional volume, weight, labor, or restricted disposal items may be quoted separately."
+    ],
+    "assumptions": [
+      "Quote assumes safe access and non-hazardous items unless stated in the project details.",
+      "Paint, chemicals, asbestos, biohazards, fuel, medical waste, and other regulated materials are excluded unless agreed separately.",
+      "Final pricing may change if item volume, weight, access, or disposal requirements differ from the details provided.",
+      "Client will identify items to remain and secure valuables before removal begins."
+    ],
+    "upsells": [
+      "Donation drop-off",
+      "Light demolition add-on",
+      "Garage or attic cleanout",
+      "Recurring commercial pickup",
+      "Post-removal sweeping"
+    ]
   }
 }

@@ -143,6 +143,7 @@ function buildProposal(input: ProposalInput): Proposal {
     assumptions: template.assumptions,
     optionalUpsells: template.upsells,
     proposalOptions,
+    approvalText: createApprovalText(copy.close),
     followUpEmail,
     clientReadyProposal: "",
     sections: []
@@ -181,7 +182,7 @@ function assembleProposal(proposal: Proposal): Proposal {
     { title: "Assumptions", body: proposal.assumptions },
     { title: "Optional Upsells", body: proposal.optionalUpsells },
     { title: "Follow-up Email", body: proposal.followUpEmail },
-    { title: "Approval", body: toneCopy[proposal.tone].close }
+    { title: "Approval", body: proposal.approvalText }
   ];
 
   return {
@@ -283,6 +284,15 @@ function createDepositSummary(
 
 function roundMoney(value: number): number {
   return Math.round(value * 100) / 100;
+}
+
+function createApprovalText(close: string): string[] {
+  return [
+    close,
+    "Proposal valid for 14 days from the date issued unless updated in writing.",
+    "Client approval: ______________________________",
+    "Accepted date: ______________________________"
+  ];
 }
 
 function createFollowUpEmail(input: {

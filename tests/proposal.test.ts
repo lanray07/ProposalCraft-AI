@@ -36,6 +36,8 @@ describe("proposal generation", () => {
     expect(proposal.pricingSummary).toContain("$680");
     expect(proposal.clientReadyProposal).toContain("## Scope of Work");
     expect(proposal.clientReadyProposal).toContain("## Proposal Options");
+    expect(proposal.clientReadyProposal).toContain("Proposal valid for 14 days");
+    expect(proposal.clientReadyProposal).toContain("Client approval:");
     expect(proposal.optionalUpsells).toContain("Deep clean add-on");
   });
 
@@ -112,15 +114,23 @@ describe("proposal generation", () => {
 
   it("ships the required service templates", () => {
     expect(Object.keys(getTemplates()).sort()).toEqual([
+      "appliance-repair",
       "cleaning",
       "electrical",
+      "flooring",
       "general-contractor",
       "handyman",
+      "hvac",
+      "junk-removal",
       "landscaping",
+      "moving",
       "painting",
       "paving",
+      "pest-control",
       "plumbing",
+      "pool-service",
       "pressure-washing",
+      "remodeling",
       "roofing"
     ]);
   });
