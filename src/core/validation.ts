@@ -8,6 +8,49 @@ export const proposalInputSchema = z.object({
     .max(120, "Business name must be 120 characters or fewer.")
     .optional()
     .transform((value) => value || undefined),
+  contactName: z
+    .string()
+    .trim()
+    .max(120, "Contact name must be 120 characters or fewer.")
+    .optional()
+    .transform((value) => value || undefined),
+  businessPhone: z
+    .string()
+    .trim()
+    .max(60, "Business phone must be 60 characters or fewer.")
+    .optional()
+    .transform((value) => value || undefined),
+  businessEmail: z
+    .string()
+    .trim()
+    .email("Business email must be a valid email address.")
+    .max(180, "Business email must be 180 characters or fewer.")
+    .optional()
+    .or(z.literal("").transform(() => undefined)),
+  businessWebsite: z
+    .string()
+    .trim()
+    .max(180, "Business website must be 180 characters or fewer.")
+    .optional()
+    .transform((value) => value || undefined),
+  licenseNote: z
+    .string()
+    .trim()
+    .max(220, "License or insurance note must be 220 characters or fewer.")
+    .optional()
+    .transform((value) => value || undefined),
+  preparedDate: z
+    .string()
+    .trim()
+    .max(80, "Prepared date must be 80 characters or fewer.")
+    .optional()
+    .transform((value) => value || undefined),
+  proposalId: z
+    .string()
+    .trim()
+    .max(80, "Proposal ID must be 80 characters or fewer.")
+    .optional()
+    .transform((value) => value || undefined),
   clientName: z
     .string()
     .trim()

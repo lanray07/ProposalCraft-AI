@@ -22,6 +22,7 @@ describe("proposal generation", () => {
 
     expect(proposal.title).toBe("Cleaning Proposal");
     expect(proposal.sections.map((section: ProposalSection) => section.title)).toEqual([
+      "Proposal Details",
       "Project Overview",
       "Scope of Work",
       "Timeline",
@@ -113,6 +114,13 @@ describe("proposal generation", () => {
     const proposal = generateProposal({
       ...baseInput,
       businessName: "Bright Finish Cleaning",
+      contactName: "Dana Lee",
+      businessPhone: "(555) 010-7788",
+      businessEmail: "hello@brightfinish.example",
+      businessWebsite: "brightfinish.example",
+      licenseNote: "Fully insured",
+      preparedDate: "April 19, 2026",
+      proposalId: "PC-CLEAN-001",
       clientName: "Acme Offices",
       depositPercent: 25
     });
@@ -123,6 +131,16 @@ describe("proposal generation", () => {
       "Prepared by: Bright Finish Cleaning"
     );
     expect(proposal.clientReadyProposal).toContain("Prepared for: Acme Offices");
+    expect(proposal.clientReadyProposal).toContain("Contact: Dana Lee");
+    expect(proposal.clientReadyProposal).toContain("Phone: (555) 010-7788");
+    expect(proposal.clientReadyProposal).toContain(
+      "Email: hello@brightfinish.example"
+    );
+    expect(proposal.clientReadyProposal).toContain("Website: brightfinish.example");
+    expect(proposal.clientReadyProposal).toContain("License/insurance: Fully insured");
+    expect(proposal.clientReadyProposal).toContain("Prepared date: April 19, 2026");
+    expect(proposal.clientReadyProposal).toContain("Proposal ID: PC-CLEAN-001");
+    expect(proposal.details.proposalId).toBe("PC-CLEAN-001");
     expect(proposal.clientReadyProposal).toContain(
       "25% deposit due on approval: $170"
     );

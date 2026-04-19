@@ -1,6 +1,7 @@
 import templates from "../templates/proposal-templates.json" with { type: "json" };
 import {
   type Proposal,
+  type ProposalDetails,
   type ProposalExplanation,
   type ProposalInput,
   type ProposalOption,
@@ -96,6 +97,7 @@ export function explainProposal(
       "Include optional pricing breakdown lines only when supplied by the user.",
       "Create Good, Better, and Best options from fixed percentage adjustments.",
       "Create send-ready client email, approval message, and next-step copy.",
+      "Include proposal details, contact information, prepared date, and proposal ID when supplied.",
       "Return a fixed client-ready section order."
     ],
     includedSections: [
@@ -122,6 +124,7 @@ function buildProposal(input: ProposalInput): Proposal {
   const cleanedDescription = sentenceCase(input.projectDescription);
   const clientPrefix = input.clientName ? ` for ${input.clientName}` : "";
   const title = createTitle(template.label, input.clientName);
+  const details = createProposalDetails(input, title);
   const projectOverview = `${copy.greeting} This ${template.overviewLead} covers: ${cleanedDescription} ${copy.promise}`;
   const pricingSummary = `Total proposed price${clientPrefix}: ${formatCurrency(input.price)}. This price is based on the project details provided and the assumptions listed below.`;
   const pricingBreakdown = input.pricingBreakdown ?? [];
@@ -156,6 +159,7 @@ function buildProposal(input: ProposalInput): Proposal {
     title,
     businessName: input.businessName,
     clientName: input.clientName,
+    details,
     serviceLabel: template.label,
     tone: input.tone,
     projectOverview,
@@ -183,17 +187,10 @@ function buildProposal(input: ProposalInput): Proposal {
 
 function assembleProposal(proposal: Proposal): Proposal {
   const sections = [
-    ...(proposal.businessName || proposal.clientName
-      ? [
-          {
-            title: "Proposal Details",
-            body: [
-              ...(proposal.businessName ? [`Prepared by: ${proposal.businessName}`] : []),
-              ...(proposal.clientName ? [`Prepared for: ${proposal.clientName}`] : [])
-            ]
-          }
-        ]
-      : []),
+    {
+      title: "Proposal Details",
+      body: formatProposalDetails(proposal.details)
+    },
     { title: "Project Overview", body: proposal.projectOverview },
     { title: "Scope of Work", body: proposal.scopeOfWork },
     { title: "Timeline", body: proposal.timeline },
@@ -227,6 +224,40 @@ function assembleProposal(proposal: Proposal): Proposal {
 
 function createScope(template: ServiceTemplate, description: string): string[] {
   return [`Project-specific work: ${description}`, ...template.scopeItems];
+}
+
+function createProposalDetails(
+  input: ProposalInput,
+  proposalTitle: string
+): ProposalDetails {
+  const preparedDate = input.preparedDate ?? formatPreparedDate(new Date());
+  const proposalId = input.proposalId ?? createProposalId(proposalTitle, preparedDate);
+
+  return {
+    preparedBy: input.businessName,
+    preparedFor: input.clientName,
+    contactName: input.contactName,
+    phone: input.businessPhone,
+    email: input.businessEmail,
+    website: input.businessWebsite,
+    licenseNote: input.licenseNote,
+    preparedDate,
+    proposalId
+  };
+}
+
+function formatProposalDetails(details: ProposalDetails): string[] {
+  return [
+    ...(details.preparedBy ? [`Prepared by: ${details.preparedBy}`] : []),
+    ...(details.preparedFor ? [`Prepared for: ${details.preparedFor}`] : []),
+    ...(details.contactName ? [`Contact: ${details.contactName}`] : []),
+    ...(details.phone ? [`Phone: ${details.phone}`] : []),
+    ...(details.email ? [`Email: ${details.email}`] : []),
+    ...(details.website ? [`Website: ${details.website}`] : []),
+    ...(details.licenseNote ? [`License/insurance: ${details.licenseNote}`] : []),
+    `Prepared date: ${details.preparedDate}`,
+    `Proposal ID: ${details.proposalId}`
+  ];
 }
 
 function formatPricingSummary(proposal: Proposal): string | string[] {
@@ -339,6 +370,29 @@ function createTitle(serviceLabel: string, clientName?: string): string {
   return clientName
     ? `${serviceLabel} Proposal for ${clientName}`
     : `${serviceLabel} Proposal`;
+}
+
+function formatPreparedDate(date: Date): string {
+  return new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC"
+  }).format(date);
+}
+
+function createProposalId(proposalTitle: string, preparedDate: string): string {
+  const slug = proposalTitle
+    .toUpperCase()
+    .replace(/[^A-Z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 18);
+  const dateSlug = preparedDate
+    .toUpperCase()
+    .replace(/[^A-Z0-9]+/g, "")
+    .slice(0, 12);
+
+  return `PC-${dateSlug}-${slug || "PROPOSAL"}`;
 }
 
 function createDepositSummary(

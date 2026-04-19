@@ -4,7 +4,7 @@ ProposalCraft AI is a ChatGPT app built with the OpenAI Apps SDK pattern: a Reac
 
 ## What It Does
 
-- Collects business name, client name, project description, service type, price, deposit percentage, timeline, and tone.
+- Collects business name, contact details, client name, project description, service type, price, deposit percentage, timeline, and tone.
 - Generates a fixed proposal structure with overview, scope, timeline, pricing, optional line-item breakdown, Good / Better / Best options, payment terms, assumptions, upsells, next steps, client email, approval message, follow-up email, and approval copy.
 - Uses reusable JSON templates for landscaping, paving, cleaning, general contractor, painting, plumbing, electrical, handyman, pressure washing, roofing, HVAC, flooring, remodeling, moving, pest control, pool service, appliance repair, and junk removal jobs.
 - Saves form inputs locally in the browser for faster repeat proposals.
@@ -54,6 +54,7 @@ For ChatGPT developer testing, expose the local MCP endpoint with a secure tunne
 In ChatGPT, ask ProposalCraft AI to generate a proposal and provide:
 
 - Business name, optional
+- Contact name, phone, email, website, license/insurance note, prepared date, and proposal ID, optional
 - Client name, optional
 - Project description
 - Service type

@@ -17,6 +17,13 @@ import "./styles.css";
 
 type FormState = {
   businessName: string;
+  contactName: string;
+  businessPhone: string;
+  businessEmail: string;
+  businessWebsite: string;
+  licenseNote: string;
+  preparedDate: string;
+  proposalId: string;
   clientName: string;
   projectDescription: string;
   serviceType: ServiceType;
@@ -56,6 +63,13 @@ const toneLabels: Record<Tone, string> = {
 
 const initialForm: FormState = {
   businessName: "ProposalCraft Services",
+  contactName: "Jordan Smith",
+  businessPhone: "(555) 014-2400",
+  businessEmail: "hello@proposalcraft.example",
+  businessWebsite: "proposalcraft.example",
+  licenseNote: "Fully insured; license available on request",
+  preparedDate: "",
+  proposalId: "",
   clientName: "Sample Client",
   projectDescription:
     "Install a new patio area with clean edging, compacted base, and a tidy finish for a residential garden.",
@@ -192,6 +206,54 @@ function App() {
           </label>
 
           <label className="field">
+            <span>Prepared by</span>
+            <input
+              value={form.contactName}
+              onChange={(event) =>
+                setForm({ ...form, contactName: event.target.value })
+              }
+              maxLength={120}
+              placeholder="Contact name"
+            />
+          </label>
+
+          <label className="field">
+            <span>Business phone</span>
+            <input
+              value={form.businessPhone}
+              onChange={(event) =>
+                setForm({ ...form, businessPhone: event.target.value })
+              }
+              maxLength={60}
+              placeholder="Phone"
+            />
+          </label>
+
+          <label className="field">
+            <span>Business email</span>
+            <input
+              value={form.businessEmail}
+              onChange={(event) =>
+                setForm({ ...form, businessEmail: event.target.value })
+              }
+              maxLength={180}
+              placeholder="Email"
+            />
+          </label>
+
+          <label className="field">
+            <span>Website</span>
+            <input
+              value={form.businessWebsite}
+              onChange={(event) =>
+                setForm({ ...form, businessWebsite: event.target.value })
+              }
+              maxLength={180}
+              placeholder="Website"
+            />
+          </label>
+
+          <label className="field">
             <span>Client name</span>
             <input
               value={form.clientName}
@@ -200,6 +262,42 @@ function App() {
               }
               maxLength={120}
               placeholder="Client or company"
+            />
+          </label>
+
+          <label className="field field-wide">
+            <span>License / insurance note</span>
+            <input
+              value={form.licenseNote}
+              onChange={(event) =>
+                setForm({ ...form, licenseNote: event.target.value })
+              }
+              maxLength={220}
+              placeholder="Fully insured; license available on request"
+            />
+          </label>
+
+          <label className="field">
+            <span>Prepared date</span>
+            <input
+              value={form.preparedDate}
+              onChange={(event) =>
+                setForm({ ...form, preparedDate: event.target.value })
+              }
+              maxLength={80}
+              placeholder="Auto"
+            />
+          </label>
+
+          <label className="field">
+            <span>Proposal ID</span>
+            <input
+              value={form.proposalId}
+              onChange={(event) =>
+                setForm({ ...form, proposalId: event.target.value })
+              }
+              maxLength={80}
+              placeholder="Auto"
             />
           </label>
 
@@ -417,6 +515,13 @@ function formFromHost(): FormState | undefined {
   return {
     projectDescription: String(input.projectDescription ?? initialForm.projectDescription),
     businessName: String(input.businessName ?? initialForm.businessName),
+    contactName: String(input.contactName ?? initialForm.contactName),
+    businessPhone: String(input.businessPhone ?? initialForm.businessPhone),
+    businessEmail: String(input.businessEmail ?? initialForm.businessEmail),
+    businessWebsite: String(input.businessWebsite ?? initialForm.businessWebsite),
+    licenseNote: String(input.licenseNote ?? initialForm.licenseNote),
+    preparedDate: String(input.preparedDate ?? initialForm.preparedDate),
+    proposalId: String(input.proposalId ?? initialForm.proposalId),
     clientName: String(input.clientName ?? initialForm.clientName),
     serviceType: isServiceType(input.serviceType)
       ? input.serviceType
@@ -448,6 +553,15 @@ function readSavedForm(): FormState | undefined {
 
     return {
       businessName: String(parsed.businessName ?? initialForm.businessName),
+      contactName: String(parsed.contactName ?? initialForm.contactName),
+      businessPhone: String(parsed.businessPhone ?? initialForm.businessPhone),
+      businessEmail: String(parsed.businessEmail ?? initialForm.businessEmail),
+      businessWebsite: String(
+        parsed.businessWebsite ?? initialForm.businessWebsite
+      ),
+      licenseNote: String(parsed.licenseNote ?? initialForm.licenseNote),
+      preparedDate: String(parsed.preparedDate ?? initialForm.preparedDate),
+      proposalId: String(parsed.proposalId ?? initialForm.proposalId),
       clientName: String(parsed.clientName ?? initialForm.clientName),
       projectDescription: String(
         parsed.projectDescription ?? initialForm.projectDescription
@@ -487,6 +601,13 @@ function removeSavedForm() {
 function toProposalInput(formState: FormState): ProposalInput {
   return {
     businessName: formState.businessName.trim() || undefined,
+    contactName: formState.contactName.trim() || undefined,
+    businessPhone: formState.businessPhone.trim() || undefined,
+    businessEmail: formState.businessEmail.trim() || undefined,
+    businessWebsite: formState.businessWebsite.trim() || undefined,
+    licenseNote: formState.licenseNote.trim() || undefined,
+    preparedDate: formState.preparedDate.trim() || undefined,
+    proposalId: formState.proposalId.trim() || undefined,
     clientName: formState.clientName.trim() || undefined,
     projectDescription: formState.projectDescription,
     serviceType: formState.serviceType,

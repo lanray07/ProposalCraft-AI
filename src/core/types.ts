@@ -26,6 +26,13 @@ export type Tone = (typeof tones)[number];
 
 export type ProposalInput = {
   businessName?: string;
+  contactName?: string;
+  businessPhone?: string;
+  businessEmail?: string;
+  businessWebsite?: string;
+  licenseNote?: string;
+  preparedDate?: string;
+  proposalId?: string;
   clientName?: string;
   projectDescription: string;
   serviceType: ServiceType;
@@ -57,10 +64,23 @@ export type PricingLine = {
   amount: number;
 };
 
+export type ProposalDetails = {
+  preparedBy?: string;
+  preparedFor?: string;
+  contactName?: string;
+  phone?: string;
+  email?: string;
+  website?: string;
+  licenseNote?: string;
+  preparedDate: string;
+  proposalId: string;
+};
+
 export type Proposal = {
   title: string;
   businessName?: string;
   clientName?: string;
+  details: ProposalDetails;
   serviceLabel: string;
   tone: Tone;
   projectOverview: string;

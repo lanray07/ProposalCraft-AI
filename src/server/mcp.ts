@@ -41,6 +41,37 @@ const proposalInputJsonSchema: Tool["inputSchema"] = {
       type: "string",
       description: "Optional service provider or company name to show in proposal details."
     },
+    contactName: {
+      type: "string",
+      description: "Optional person preparing or sending the proposal."
+    },
+    businessPhone: {
+      type: "string",
+      description: "Optional business phone number for the proposal details."
+    },
+    businessEmail: {
+      type: "string",
+      description: "Optional business email address for the proposal details."
+    },
+    businessWebsite: {
+      type: "string",
+      description: "Optional business website for the proposal details."
+    },
+    licenseNote: {
+      type: "string",
+      description:
+        "Optional license, insurance, certification, or bonding note to include in proposal details."
+    },
+    preparedDate: {
+      type: "string",
+      description:
+        "Optional prepared date. If omitted, ProposalCraft AI uses the current date."
+    },
+    proposalId: {
+      type: "string",
+      description:
+        "Optional proposal ID. If omitted, ProposalCraft AI creates a deterministic ID from the title and date."
+    },
     clientName: {
       type: "string",
       description: "Optional client name to personalize the proposal title and details."
