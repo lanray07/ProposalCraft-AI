@@ -9,7 +9,7 @@ const sourceWidgetPath = path.resolve(
   "proposalcraft.html"
 );
 
-export const widgetUri = "ui://widget/proposalcraft-ai.html";
+export const widgetUri = "ui://widget/proposalcraft-ai-v2.html";
 export const widgetMimeType = "text/html+skybridge";
 
 export function getBaseUrl(): string {
