@@ -34,7 +34,10 @@ describe("proposal PDF generation", () => {
     expect(pdf.byteLength).toBeGreaterThan(1000);
     expect(text.startsWith("%PDF-1.4")).toBe(true);
     expect(text).toContain("/Type /Catalog");
+    expect(text).toContain("/BaseFont /Helvetica-Bold");
     expect(text).toContain("HVAC Proposal for Morgan Lee");
     expect(text).toContain("Labor: $250");
+    expect(text).toContain("Proposal Details");
+    expect(text).toContain("Page 1 of");
   });
 });

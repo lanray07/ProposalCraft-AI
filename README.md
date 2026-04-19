@@ -84,7 +84,7 @@ Creates a proposal from the required job fields.
 
 ### `generateProposalPdf`
 
-Creates the same proposal and returns a client-ready PDF attachment.
+Creates the same proposal and returns a client-ready PDF attachment with branded title styling, section headings, and page footer metadata.
 
 ### `regenerateProposal`
 

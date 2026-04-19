@@ -1,5 +1,5 @@
 import { generateProposal } from "./proposal.js";
-import type { Proposal, ProposalInput } from "./types.js";
+import type { Proposal, ProposalInput, ProposalSection } from "./types.js";
 
 export type ProposalPdfFile = {
   proposal: Proposal;
@@ -9,18 +9,29 @@ export type ProposalPdfFile = {
   byteLength: number;
 };
 
+type PdfLine = {
+  text: string;
+  font: "regular" | "bold";
+  size: number;
+  gapBefore?: number;
+};
+
 const pageWidth = 612;
 const pageHeight = 792;
 const marginX = 54;
-const startY = 738;
-const fontSize = 10;
-const lineHeight = 14;
-const maxCharactersPerLine = 92;
-const maxLinesPerPage = 48;
+const startY = 720;
+const footerY = 34;
+const bodySize = 10;
+const headingSize = 14;
+const titleSize = 22;
+const bodyLineHeight = 14;
+const maxBodyCharacters = 88;
+const maxHeadingCharacters = 58;
+const maxTitleCharacters = 36;
 
 export function generateProposalPdf(input: ProposalInput): ProposalPdfFile {
   const proposal = generateProposal(input);
-  const bytes = createPdfBytes(proposal.plainTextProposal);
+  const bytes = createPdfBytes(proposal);
 
   return {
     proposal,
@@ -31,8 +42,10 @@ export function generateProposalPdf(input: ProposalInput): ProposalPdfFile {
   };
 }
 
-function createPdfBytes(text: string): Uint8Array {
-  const pages = paginate(wrapText(text));
+function createPdfBytes(proposal: Proposal): Uint8Array {
+  const pages = paginateLines(createPdfLines(proposal));
+  const fontObjectNumber = 3 + pages.length * 2;
+  const boldFontObjectNumber = fontObjectNumber + 1;
   const objects: string[] = [
     "<< /Type /Catalog /Pages 2 0 R >>",
     `<< /Type /Pages /Kids [${pages
@@ -43,16 +56,172 @@ function createPdfBytes(text: string): Uint8Array {
   for (const [index, pageLines] of pages.entries()) {
     const pageObjectNumber = 3 + index * 2;
     const contentObjectNumber = pageObjectNumber + 1;
-    const stream = createContentStream(pageLines);
+    const stream = createContentStream(pageLines, index + 1, pages.length, proposal);
 
     objects.push(
-      `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Resources << /Font << /F1 ${3 + pages.length * 2} 0 R >> >> /Contents ${contentObjectNumber} 0 R >>`
+      `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageWidth} ${pageHeight}] /Resources << /Font << /F1 ${fontObjectNumber} 0 R /F2 ${boldFontObjectNumber} 0 R >> >> /Contents ${contentObjectNumber} 0 R >>`
     );
     objects.push(`<< /Length ${asciiByteLength(stream)} >>\nstream\n${stream}\nendstream`);
   }
 
   objects.push("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>");
+  objects.push("<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>");
 
+  return buildPdf(objects);
+}
+
+function createPdfLines(proposal: Proposal): PdfLine[] {
+  const lines: PdfLine[] = [
+    ...wrapPdfLine(proposal.title, {
+      font: "bold",
+      size: titleSize,
+      maxCharacters: maxTitleCharacters
+    }),
+    {
+      text: proposal.details.preparedBy ?? "Client-ready service proposal",
+      font: "regular",
+      size: 11
+    }
+  ];
+
+  for (const section of proposal.sections) {
+    lines.push(...sectionToPdfLines(section));
+  }
+
+  return lines;
+}
+
+function sectionToPdfLines(section: ProposalSection): PdfLine[] {
+  const lines = wrapPdfLine(section.title, {
+    font: "bold",
+    size: headingSize,
+    maxCharacters: maxHeadingCharacters,
+    gapBefore: 14
+  });
+  const items = Array.isArray(section.body) ? section.body : [section.body];
+
+  for (const item of items) {
+    const prefix = Array.isArray(section.body) ? "- " : "";
+    lines.push(
+      ...wrapPdfLine(`${prefix}${item}`, {
+        font: "regular",
+        size: bodySize,
+        maxCharacters: maxBodyCharacters
+      })
+    );
+  }
+
+  return lines;
+}
+
+function wrapPdfLine(input: string, options: {
+  font: PdfLine["font"];
+  size: number;
+  maxCharacters: number;
+  gapBefore?: number;
+}): PdfLine[] {
+  const source = sanitizePdfText(input);
+
+  if (source.trim() === "") {
+    return [{ text: "", font: options.font, size: options.size, gapBefore: options.gapBefore }];
+  }
+
+  const words = source.split(/\s+/);
+  const lines: PdfLine[] = [];
+  let current = "";
+
+  for (const word of words) {
+    const next = current ? `${current} ${word}` : word;
+
+    if (next.length <= options.maxCharacters) {
+      current = next;
+    } else {
+      if (current) {
+        lines.push({
+          text: current,
+          font: options.font,
+          size: options.size,
+          gapBefore: lines.length === 0 ? options.gapBefore : undefined
+        });
+      }
+      current = word;
+    }
+  }
+
+  if (current) {
+    lines.push({
+      text: current,
+      font: options.font,
+      size: options.size,
+      gapBefore: lines.length === 0 ? options.gapBefore : undefined
+    });
+  }
+
+  return lines;
+}
+
+function paginateLines(lines: PdfLine[]): PdfLine[][] {
+  const pages: PdfLine[][] = [];
+  let page: PdfLine[] = [];
+  let y = startY;
+
+  for (const line of lines) {
+    const gap = line.gapBefore ?? 3;
+    const height = line.size + gap + 4;
+
+    if (page.length > 0 && y - height < footerY + 28) {
+      pages.push(page);
+      page = [];
+      y = startY;
+    }
+
+    page.push(line);
+    y -= height;
+  }
+
+  if (page.length > 0) {
+    pages.push(page);
+  }
+
+  return pages.length ? pages : [[{ text: "", font: "regular", size: bodySize }]];
+}
+
+function createContentStream(
+  lines: PdfLine[],
+  pageNumber: number,
+  pageCount: number,
+  proposal: Proposal
+): string {
+  const commands: string[] = [
+    "0.96 0.97 0.94 rg",
+    `0 0 ${pageWidth} ${pageHeight} re f`,
+    "0.12 0.18 0.15 rg",
+    "BT"
+  ];
+  let y = startY;
+
+  for (const line of lines) {
+    y -= line.gapBefore ?? 3;
+    commands.push(
+      `/${line.font === "bold" ? "F2" : "F1"} ${line.size} Tf`,
+      `${marginX} ${y} Td`,
+      `(${escapePdfText(line.text)}) Tj`,
+      `${-marginX} ${-y} Td`
+    );
+    y -= line.size + 4;
+  }
+
+  commands.push(
+    "/F1 8 Tf",
+    `54 ${footerY} Td`,
+    `(${escapePdfText(`${proposal.details.proposalId} | Page ${pageNumber} of ${pageCount}`)}) Tj`,
+    "ET"
+  );
+
+  return commands.join("\n");
+}
+
+function buildPdf(objects: string[]): Uint8Array {
   const chunks = ["%PDF-1.4\n"];
   const offsets: number[] = [0];
   let offset = asciiByteLength(chunks[0]);
@@ -81,53 +250,13 @@ function createPdfBytes(text: string): Uint8Array {
   return asciiToBytes(chunks.join(""));
 }
 
-function createContentStream(lines: string[]): string {
-  const content = lines
-    .map((line) => `(${escapePdfText(line)}) Tj T*`)
-    .join("\n");
-
-  return `BT /F1 ${fontSize} Tf ${lineHeight} TL ${marginX} ${startY} Td\n${content}\nET`;
-}
-
-function wrapText(text: string): string[] {
-  return text.split(/\r?\n/).flatMap((line) => {
-    if (line.trim() === "") {
-      return [""];
-    }
-
-    const words = line.split(/\s+/);
-    const wrapped: string[] = [];
-    let current = "";
-
-    for (const word of words) {
-      const next = current ? `${current} ${word}` : word;
-
-      if (next.length <= maxCharactersPerLine) {
-        current = next;
-      } else {
-        if (current) {
-          wrapped.push(current);
-        }
-        current = word;
-      }
-    }
-
-    if (current) {
-      wrapped.push(current);
-    }
-
-    return wrapped;
-  });
-}
-
-function paginate(lines: string[]): string[][] {
-  const pages: string[][] = [];
-
-  for (let index = 0; index < lines.length; index += maxLinesPerPage) {
-    pages.push(lines.slice(index, index + maxLinesPerPage));
-  }
-
-  return pages.length ? pages : [[""]];
+function sanitizePdfText(value: string): string {
+  return value
+    .replace(/[–—]/g, "-")
+    .replace(/[“”]/g, '"')
+    .replace(/[‘’]/g, "'")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 function escapePdfText(value: string): string {
