@@ -9,25 +9,28 @@ export type ProposalPdfFile = {
   byteLength: number;
 };
 
+type PdfColor = "dark" | "muted" | "accent" | "white";
+
 type PdfLine = {
   text: string;
   font: "regular" | "bold";
   size: number;
+  color?: PdfColor;
   gapBefore?: number;
+  indent?: number;
 };
 
 const pageWidth = 612;
 const pageHeight = 792;
 const marginX = 54;
-const startY = 720;
+const firstPageStartY = 575;
+const pageStartY = 720;
 const footerY = 34;
 const bodySize = 10;
-const headingSize = 14;
-const titleSize = 22;
-const bodyLineHeight = 14;
-const maxBodyCharacters = 88;
+const headingSize = 12;
+const maxBodyCharacters = 86;
 const maxHeadingCharacters = 58;
-const maxTitleCharacters = 36;
+const maxTitleCharacters = 32;
 
 export function generateProposalPdf(input: ProposalInput): ProposalPdfFile {
   const proposal = generateProposal(input);
@@ -72,31 +75,99 @@ function createPdfBytes(proposal: Proposal): Uint8Array {
 
 function createPdfLines(proposal: Proposal): PdfLine[] {
   const lines: PdfLine[] = [
-    ...wrapPdfLine(proposal.title, {
-      font: "bold",
-      size: titleSize,
-      maxCharacters: maxTitleCharacters
-    }),
     {
-      text: proposal.details.preparedBy ?? "Client-ready service proposal",
-      font: "regular",
-      size: 11
-    }
+      text: "Proposal Details",
+      font: "bold",
+      size: headingSize,
+      color: "accent",
+      gapBefore: 0
+    },
+    ...detailsToPdfLines(proposal),
+    ...sectionToPdfLines({
+      title: "Project Overview",
+      body: proposal.projectOverview
+    }),
+    ...sectionToPdfLines({
+      title: "Scope of Work",
+      body: proposal.scopeOfWork
+    }),
+    ...sectionToPdfLines({
+      title: "Timeline",
+      body: proposal.timeline
+    }),
+    ...sectionToPdfLines({
+      title: "Pricing Summary",
+      body: [
+        proposal.pricingSummary,
+        ...proposal.pricingBreakdown.map(
+          (line) => `${line.label}: ${formatCurrency(line.amount)}`
+        ),
+        ...(proposal.depositSummary ? [proposal.depositSummary] : [])
+      ]
+    }),
+    ...sectionToPdfLines({
+      title: "Proposal Options",
+      body: proposal.proposalOptions.map(
+        (option) =>
+          `${option.name} - ${formatCurrency(option.price)}: ${option.summary} Includes ${option.includes.join("; ")}.`
+      )
+    }),
+    ...sectionToPdfLines({
+      title: "Payment Terms",
+      body: proposal.paymentTerms
+    }),
+    ...sectionToPdfLines({
+      title: "Assumptions",
+      body: proposal.assumptions
+    }),
+    ...sectionToPdfLines({
+      title: "Optional Upsells",
+      body: proposal.optionalUpsells
+    }),
+    ...sectionToPdfLines({
+      title: "Next Steps",
+      body: proposal.nextSteps
+    }),
+    ...sectionToPdfLines({
+      title: "Approval",
+      body: proposal.approvalText
+    })
   ];
 
-  for (const section of proposal.sections) {
-    lines.push(...sectionToPdfLines(section));
-  }
-
   return lines;
+}
+
+function detailsToPdfLines(proposal: Proposal): PdfLine[] {
+  const details = proposal.details;
+  const values = [
+    details.preparedBy ? `Prepared by: ${details.preparedBy}` : undefined,
+    details.preparedFor ? `Prepared for: ${details.preparedFor}` : undefined,
+    details.contactName ? `Contact: ${details.contactName}` : undefined,
+    details.phone ? `Phone: ${details.phone}` : undefined,
+    details.email ? `Email: ${details.email}` : undefined,
+    details.website ? `Website: ${details.website}` : undefined,
+    details.licenseNote ? `License/insurance: ${details.licenseNote}` : undefined,
+    `Prepared date: ${details.preparedDate}`,
+    `Proposal ID: ${details.proposalId}`
+  ].filter(Boolean) as string[];
+
+  return values.flatMap((value) =>
+    wrapPdfLine(value, {
+      font: "regular",
+      size: bodySize,
+      color: "dark",
+      maxCharacters: maxBodyCharacters
+    })
+  );
 }
 
 function sectionToPdfLines(section: ProposalSection): PdfLine[] {
   const lines = wrapPdfLine(section.title, {
     font: "bold",
     size: headingSize,
+    color: "accent",
     maxCharacters: maxHeadingCharacters,
-    gapBefore: 14
+    gapBefore: 16
   });
   const items = Array.isArray(section.body) ? section.body : [section.body];
 
@@ -106,7 +177,9 @@ function sectionToPdfLines(section: ProposalSection): PdfLine[] {
       ...wrapPdfLine(`${prefix}${item}`, {
         font: "regular",
         size: bodySize,
-        maxCharacters: maxBodyCharacters
+        color: "dark",
+        indent: Array.isArray(section.body) ? 10 : 0,
+        maxCharacters: maxBodyCharacters - (Array.isArray(section.body) ? 6 : 0)
       })
     );
   }
@@ -114,16 +187,30 @@ function sectionToPdfLines(section: ProposalSection): PdfLine[] {
   return lines;
 }
 
-function wrapPdfLine(input: string, options: {
-  font: PdfLine["font"];
-  size: number;
-  maxCharacters: number;
-  gapBefore?: number;
-}): PdfLine[] {
+function wrapPdfLine(
+  input: string,
+  options: {
+    font: PdfLine["font"];
+    size: number;
+    color?: PdfColor;
+    maxCharacters: number;
+    gapBefore?: number;
+    indent?: number;
+  }
+): PdfLine[] {
   const source = sanitizePdfText(input);
 
   if (source.trim() === "") {
-    return [{ text: "", font: options.font, size: options.size, gapBefore: options.gapBefore }];
+    return [
+      {
+        text: "",
+        font: options.font,
+        size: options.size,
+        color: options.color,
+        gapBefore: options.gapBefore,
+        indent: options.indent
+      }
+    ];
   }
 
   const words = source.split(/\s+/);
@@ -141,7 +228,9 @@ function wrapPdfLine(input: string, options: {
           text: current,
           font: options.font,
           size: options.size,
-          gapBefore: lines.length === 0 ? options.gapBefore : undefined
+          color: options.color,
+          gapBefore: lines.length === 0 ? options.gapBefore : undefined,
+          indent: options.indent
         });
       }
       current = word;
@@ -153,7 +242,9 @@ function wrapPdfLine(input: string, options: {
       text: current,
       font: options.font,
       size: options.size,
-      gapBefore: lines.length === 0 ? options.gapBefore : undefined
+      color: options.color,
+      gapBefore: lines.length === 0 ? options.gapBefore : undefined,
+      indent: options.indent
     });
   }
 
@@ -163,16 +254,16 @@ function wrapPdfLine(input: string, options: {
 function paginateLines(lines: PdfLine[]): PdfLine[][] {
   const pages: PdfLine[][] = [];
   let page: PdfLine[] = [];
-  let y = startY;
+  let y = firstPageStartY;
 
   for (const line of lines) {
-    const gap = line.gapBefore ?? 3;
+    const gap = line.gapBefore ?? 4;
     const height = line.size + gap + 4;
 
-    if (page.length > 0 && y - height < footerY + 28) {
+    if (page.length > 0 && y - height < footerY + 30) {
       pages.push(page);
       page = [];
-      y = startY;
+      y = pageStartY;
     }
 
     page.push(line);
@@ -193,25 +284,36 @@ function createContentStream(
   proposal: Proposal
 ): string {
   const commands: string[] = [
-    "0.96 0.97 0.94 rg",
-    `0 0 ${pageWidth} ${pageHeight} re f`,
-    "0.12 0.18 0.15 rg",
-    "BT"
+    "1 1 1 rg",
+    `0 0 ${pageWidth} ${pageHeight} re f`
   ];
-  let y = startY;
+
+  if (pageNumber === 1) {
+    commands.push(...createCoverHeaderCommands(proposal));
+  }
+
+  commands.push(
+    "0.85 0.88 0.84 RG",
+    `54 ${footerY + 18} m 558 ${footerY + 18} l S`,
+    "BT"
+  );
+
+  let y = pageNumber === 1 ? firstPageStartY : pageStartY;
 
   for (const line of lines) {
-    y -= line.gapBefore ?? 3;
+    y -= line.gapBefore ?? 4;
     commands.push(
+      colorCommand(line.color ?? "dark"),
       `/${line.font === "bold" ? "F2" : "F1"} ${line.size} Tf`,
-      `${marginX} ${y} Td`,
+      `${marginX + (line.indent ?? 0)} ${y} Td`,
       `(${escapePdfText(line.text)}) Tj`,
-      `${-marginX} ${-y} Td`
+      `${-(marginX + (line.indent ?? 0))} ${-y} Td`
     );
     y -= line.size + 4;
   }
 
   commands.push(
+    colorCommand("muted"),
     "/F1 8 Tf",
     `54 ${footerY} Td`,
     `(${escapePdfText(`${proposal.details.proposalId} | Page ${pageNumber} of ${pageCount}`)}) Tj`,
@@ -219,6 +321,82 @@ function createContentStream(
   );
 
   return commands.join("\n");
+}
+
+function createCoverHeaderCommands(proposal: Proposal): string[] {
+  const details = proposal.details;
+  const total = proposal.proposalOptions[0]?.price ?? 0;
+  const preparedFor = details.preparedFor ?? "Client";
+  const preparedBy = details.preparedBy ?? proposal.businessName ?? "ProposalCraft AI";
+  const contactLine = [
+    details.contactName,
+    details.phone,
+    details.email
+  ].filter(Boolean).join(" | ");
+
+  return [
+    "0.10 0.42 0.34 rg",
+    "0 632 612 160 re f",
+    "0.83 0.91 0.86 rg",
+    "54 628 504 4 re f",
+    "BT",
+    colorCommand("white"),
+    "/F2 25 Tf",
+    "54 727 Td",
+    `(${escapePdfText(trimForPdf(proposal.title, maxTitleCharacters))}) Tj`,
+    "-54 -727 Td",
+    "/F1 10 Tf",
+    "54 704 Td",
+    `(${escapePdfText(`${preparedBy} | Prepared for ${preparedFor}`)}) Tj`,
+    "-54 -704 Td",
+    "/F1 9 Tf",
+    "54 686 Td",
+    `(${escapePdfText(contactLine || `Prepared ${details.preparedDate}`)}) Tj`,
+    "-54 -686 Td",
+    "/F2 9 Tf",
+    "54 655 Td",
+    `(TOTAL) Tj`,
+    "-54 -655 Td",
+    "/F1 12 Tf",
+    "54 638 Td",
+    `(${escapePdfText(formatCurrency(total))}) Tj`,
+    "-54 -638 Td",
+    "/F2 9 Tf",
+    "192 655 Td",
+    `(TIMELINE) Tj`,
+    "-192 -655 Td",
+    "/F1 12 Tf",
+    "192 638 Td",
+    `(${escapePdfText(trimForPdf(proposal.timeline, 26))}) Tj`,
+    "-192 -638 Td",
+    "/F2 9 Tf",
+    "388 655 Td",
+    `(PROPOSAL ID) Tj`,
+    "-388 -655 Td",
+    "/F1 12 Tf",
+    "388 638 Td",
+    `(${escapePdfText(trimForPdf(details.proposalId, 23))}) Tj`,
+    "-388 -638 Td",
+    "ET",
+    "0.93 0.95 0.92 RG",
+    "54 604 m 558 604 l S"
+  ];
+}
+
+function colorCommand(color: PdfColor): string {
+  if (color === "accent") {
+    return "0.10 0.42 0.34 rg";
+  }
+
+  if (color === "muted") {
+    return "0.38 0.43 0.40 rg";
+  }
+
+  if (color === "white") {
+    return "1 1 1 rg";
+  }
+
+  return "0.09 0.10 0.09 rg";
 }
 
 function buildPdf(objects: string[]): Uint8Array {
@@ -252,9 +430,9 @@ function buildPdf(objects: string[]): Uint8Array {
 
 function sanitizePdfText(value: string): string {
   return value
-    .replace(/[–—]/g, "-")
-    .replace(/[“”]/g, '"')
-    .replace(/[‘’]/g, "'")
+    .replace(/[\u2013\u2014]/g, "-")
+    .replace(/[\u201c\u201d]/g, '"')
+    .replace(/[\u2018\u2019]/g, "'")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -264,6 +442,16 @@ function escapePdfText(value: string): string {
     .replace(/\\/g, "\\\\")
     .replace(/\(/g, "\\(")
     .replace(/\)/g, "\\)");
+}
+
+function trimForPdf(value: string, maxCharacters: number): string {
+  const clean = sanitizePdfText(value);
+
+  if (clean.length <= maxCharacters) {
+    return clean;
+  }
+
+  return `${clean.slice(0, Math.max(0, maxCharacters - 3)).trim()}...`;
 }
 
 function asciiByteLength(value: string): number {
@@ -297,6 +485,14 @@ function bytesToBase64(bytes: Uint8Array): string {
   }
 
   return output;
+}
+
+function formatCurrency(value: number): string {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: Number.isInteger(value) ? 0 : 2
+  }).format(value);
 }
 
 function slugify(value: string): string {
