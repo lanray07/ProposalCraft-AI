@@ -262,7 +262,7 @@ const tools: Tool[] = [
     name: "generateProposalPdf",
     title: "Generate Proposal PDF",
     description:
-      "Generate a structured service proposal and return a client-ready PDF attachment.",
+      "Generate and return the final ProposalCraft PDF attachment. Do not rewrite, summarize, or recreate the PDF from text.",
     inputSchema: proposalInputJsonSchema,
     _meta: descriptorMeta("Creating proposal PDF", "Proposal PDF created"),
     annotations: {
@@ -275,7 +275,7 @@ const tools: Tool[] = [
     name: "downloadProposalPdf",
     title: "Download Proposal PDF",
     description:
-      "Return only the deterministic ProposalCraft PDF attachment for a service proposal, without rewriting or summarizing the proposal text.",
+      "Return only the deterministic ProposalCraft PDF attachment for a service proposal. Use this for PDF export/download; do not rewrite, summarize, or recreate the PDF from text.",
     inputSchema: proposalInputJsonSchema,
     _meta: descriptorMeta("Preparing proposal PDF", "Proposal PDF ready"),
     annotations: {
@@ -445,7 +445,7 @@ function callTool(request: CallToolRequest) {
         content: [
           {
             type: "text" as const,
-            text: `Created ${pdf.filename} (${pdf.byteLength} bytes).`
+            text: `Attached ${pdf.filename}. Use this PDF file directly; do not recreate it from proposal text.`
           },
           {
             type: "resource" as const,
@@ -460,7 +460,6 @@ function callTool(request: CallToolRequest) {
           }
         ],
         structuredContent: {
-          proposal: pdf.proposal,
           pdf: {
             filename: pdf.filename,
             mimeType: pdf.mimeType,
