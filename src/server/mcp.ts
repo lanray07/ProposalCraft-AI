@@ -126,6 +126,9 @@ const explainInputJsonSchema: Tool["inputSchema"] = {
 
 function descriptorMeta(invoking: string, invoked: string) {
   return {
+    ui: {
+      resourceUri: widgetUri
+    },
     "openai/outputTemplate": widgetUri,
     "openai/toolInvocation/invoking": invoking,
     "openai/toolInvocation/invoked": invoked,
@@ -144,9 +147,18 @@ function resourceMeta() {
   );
 
   return {
+    ui: {
+      prefersBorder: true,
+      domain: baseUrl,
+      csp: {
+        connectDomains: allowedDomains,
+        resourceDomains: allowedDomains
+      }
+    },
     "openai/widgetDescription":
       "A compact proposal builder for service businesses with form inputs and a copy-ready proposal card.",
     "openai/widgetPrefersBorder": true,
+    "openai/widgetDomain": baseUrl,
     "openai/widgetCSP": {
       connect_domains: allowedDomains,
       resource_domains: allowedDomains

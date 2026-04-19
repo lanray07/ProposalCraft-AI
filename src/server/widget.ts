@@ -1,5 +1,5 @@
-export const widgetUri = "ui://widget/proposalcraft-ai-v3.html";
-export const widgetMimeType = "text/html+skybridge";
+export const widgetUri = "ui://widget/proposalcraft-ai-v4.html";
+export const widgetMimeType = "text/html;profile=mcp-app";
 
 export function getBaseUrl(): string {
   return (
@@ -43,20 +43,30 @@ export function getWidgetHtml(): string {
     </main>
     <script>
       const root = document.getElementById("root");
-      const output = window.openai && window.openai.toolOutput;
-      const proposal = output && (output.proposal || (output.structuredContent && output.structuredContent.proposal));
+      const readProposal = (output) => output && (output.proposal || (output.structuredContent && output.structuredContent.proposal));
       const renderBody = (body) => Array.isArray(body)
         ? "<ul>" + body.map((item) => "<li>" + escapeHtml(item) + "</li>").join("") + "</ul>"
         : "<p>" + escapeHtml(String(body || "")) + "</p>";
       const escapeHtml = (value) => String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
-      if (proposal && root) {
+      const renderProposal = (proposal) => {
+        if (!proposal || !root) return;
         root.innerHTML = '<p class="eyebrow">' + escapeHtml(proposal.serviceLabel || "ProposalCraft AI") + "</p>"
           + "<h1>" + escapeHtml(proposal.title) + "</h1>"
           + '<div class="actions"><button type="button" id="copy">Copy proposal</button><button type="button" id="email" class="secondary">Copy email</button></div>'
           + proposal.sections.map((section) => "<section><h2>" + escapeHtml(section.title) + "</h2>" + renderBody(section.body) + "</section>").join("");
         document.getElementById("copy").addEventListener("click", () => navigator.clipboard && navigator.clipboard.writeText(proposal.clientReadyProposal));
         document.getElementById("email").addEventListener("click", () => navigator.clipboard && navigator.clipboard.writeText(proposal.followUpEmail || ""));
-      }
+      };
+
+      renderProposal(readProposal(window.openai && window.openai.toolOutput));
+
+      window.addEventListener("message", (event) => {
+        if (event.source !== window.parent) return;
+        const message = event.data;
+        if (!message || message.jsonrpc !== "2.0") return;
+        if (message.method !== "ui/notifications/tool-result") return;
+        renderProposal(readProposal(message.params));
+      }, { passive: true });
     </script>
   </body>
 </html>`;
