@@ -25,6 +25,24 @@ export const proposalInputSchema = z.object({
     .finite("Price must be a valid number.")
     .nonnegative("Price cannot be negative.")
     .max(10000000, "Price is outside the supported range."),
+  pricingBreakdown: z
+    .array(
+      z.object({
+        label: z
+          .string()
+          .trim()
+          .min(1, "Pricing breakdown labels are required.")
+          .max(80, "Pricing breakdown labels must be 80 characters or fewer."),
+        amount: z.coerce
+          .number()
+          .finite("Pricing breakdown amounts must be valid numbers.")
+          .nonnegative("Pricing breakdown amounts cannot be negative.")
+          .max(10000000, "Pricing breakdown amounts are outside the supported range.")
+      })
+    )
+    .max(12, "Pricing breakdown can include up to 12 line items.")
+    .optional()
+    .transform((value) => value?.filter((item) => item.label) ?? undefined),
   depositPercent: z.coerce
     .number()
     .finite("Deposit percent must be a valid number.")

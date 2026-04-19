@@ -79,6 +79,28 @@ const proposalInputJsonSchema: Tool["inputSchema"] = {
       minimum: 0,
       description: "Total proposed price supplied by the user."
     },
+    pricingBreakdown: {
+      type: "array",
+      description:
+        "Optional itemized pricing lines supplied by the user. The total price remains the controlling proposed price.",
+      items: {
+        type: "object",
+        properties: {
+          label: {
+            type: "string",
+            description: "Line-item label such as Labor, Materials, Disposal, or Travel."
+          },
+          amount: {
+            type: "number",
+            minimum: 0,
+            description: "Line-item amount supplied by the user."
+          }
+        },
+        required: ["label", "amount"],
+        additionalProperties: false
+      },
+      maxItems: 12
+    },
     depositPercent: {
       type: "number",
       minimum: 0,

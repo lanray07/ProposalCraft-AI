@@ -58,6 +58,28 @@ describe("proposal generation", () => {
     expect(proposal.proposalOptions[2].includes).toContain("Window cleaning");
   });
 
+  it("formats optional pricing breakdown lines without replacing the total", () => {
+    const proposal = generateProposal({
+      ...baseInput,
+      price: 680,
+      pricingBreakdown: [
+        { label: "Labor", amount: 420 },
+        { label: "Materials", amount: 180 },
+        { label: "Disposal", amount: 80 }
+      ]
+    });
+
+    expect(proposal.pricingBreakdown).toHaveLength(3);
+    expect(proposal.clientReadyProposal).toContain("- Labor: $420");
+    expect(proposal.clientReadyProposal).toContain("- Materials: $180");
+    expect(proposal.clientReadyProposal).toContain(
+      "- Listed line-item subtotal: $680."
+    );
+    expect(proposal.clientReadyProposal).toContain(
+      "- Line-item subtotal matches the proposed total."
+    );
+  });
+
   it("rejects invalid project details", () => {
     expect(() =>
       generateProposal({

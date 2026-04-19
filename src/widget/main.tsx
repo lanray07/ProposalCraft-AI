@@ -21,6 +21,7 @@ type FormState = {
   projectDescription: string;
   serviceType: ServiceType;
   price: string;
+  pricingBreakdown: string;
   depositPercent: string;
   timeline: string;
   tone: Tone;
@@ -60,6 +61,7 @@ const initialForm: FormState = {
     "Install a new patio area with clean edging, compacted base, and a tidy finish for a residential garden.",
   serviceType: "paving",
   price: "4250",
+  pricingBreakdown: "Labor: 2400\nMaterials: 1650\nDisposal and cleanup: 200",
   depositPercent: "30",
   timeline: "Estimated 4-5 working days from agreed start date",
   tone: "formal"
@@ -83,6 +85,7 @@ function App() {
       form.timeline.trim().length >= 2 &&
       Number.isFinite(Number(form.price)) &&
       Number(form.price) >= 0 &&
+      hasValidPricingBreakdown(form.pricingBreakdown) &&
       (form.depositPercent.trim() === "" ||
         (Number.isFinite(Number(form.depositPercent)) &&
           Number(form.depositPercent) >= 0 &&
@@ -235,6 +238,19 @@ function App() {
               onChange={(event) => setForm({ ...form, price: event.target.value })}
               inputMode="decimal"
               placeholder="4250"
+            />
+          </label>
+
+          <label className="field field-wide">
+            <span>Pricing breakdown</span>
+            <textarea
+              value={form.pricingBreakdown}
+              onChange={(event) =>
+                setForm({ ...form, pricingBreakdown: event.target.value })
+              }
+              rows={4}
+              maxLength={1200}
+              placeholder={"Labor: 2400\nMaterials: 1650\nDisposal: 200"}
             />
           </label>
 
@@ -406,6 +422,7 @@ function formFromHost(): FormState | undefined {
       ? input.serviceType
       : initialForm.serviceType,
     price: String(input.price ?? initialForm.price),
+    pricingBreakdown: pricingBreakdownToText(input.pricingBreakdown, ""),
     depositPercent: String(input.depositPercent ?? initialForm.depositPercent),
     timeline: String(input.timeline ?? initialForm.timeline),
     tone: isTone(input.tone) ? input.tone : initialForm.tone
@@ -439,6 +456,9 @@ function readSavedForm(): FormState | undefined {
         ? parsed.serviceType
         : initialForm.serviceType,
       price: String(parsed.price ?? initialForm.price),
+      pricingBreakdown: String(
+        parsed.pricingBreakdown ?? initialForm.pricingBreakdown
+      ),
       depositPercent: String(parsed.depositPercent ?? initialForm.depositPercent),
       timeline: String(parsed.timeline ?? initialForm.timeline),
       tone: isTone(parsed.tone) ? parsed.tone : initialForm.tone
@@ -471,6 +491,7 @@ function toProposalInput(formState: FormState): ProposalInput {
     projectDescription: formState.projectDescription,
     serviceType: formState.serviceType,
     price: Number(formState.price),
+    pricingBreakdown: parsePricingBreakdown(formState.pricingBreakdown),
     depositPercent:
       formState.depositPercent.trim() === ""
         ? undefined
@@ -478,6 +499,68 @@ function toProposalInput(formState: FormState): ProposalInput {
     timeline: formState.timeline,
     tone: formState.tone
   };
+}
+
+function hasValidPricingBreakdown(value: string): boolean {
+  try {
+    parsePricingBreakdown(value);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function parsePricingBreakdown(value: string): ProposalInput["pricingBreakdown"] {
+  const lines = value
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  if (lines.length === 0) {
+    return undefined;
+  }
+
+  return lines.map((line) => {
+    const separatorIndex = line.indexOf(":");
+
+    if (separatorIndex <= 0) {
+      throw new Error("Use pricing breakdown lines like Labor: 2400.");
+    }
+
+    const label = line.slice(0, separatorIndex).trim();
+    const rawAmount = line
+      .slice(separatorIndex + 1)
+      .trim()
+      .replace(/[$,]/g, "");
+    const amount = Number(rawAmount);
+
+    if (!label || !Number.isFinite(amount) || amount < 0) {
+      throw new Error("Use pricing breakdown lines like Labor: 2400.");
+    }
+
+    return { label, amount };
+  });
+}
+
+function pricingBreakdownToText(
+  value: unknown,
+  fallback = initialForm.pricingBreakdown
+): string {
+  if (!Array.isArray(value)) {
+    return fallback;
+  }
+
+  return value
+    .map((item) => {
+      if (!item || typeof item !== "object") {
+        return "";
+      }
+
+      const record = item as { label?: unknown; amount?: unknown };
+      return `${String(record.label ?? "").trim()}: ${String(record.amount ?? "").trim()}`;
+    })
+    .filter((line) => line.trim() !== ":")
+    .join("\n");
 }
 
 function isServiceType(value: unknown): value is ServiceType {

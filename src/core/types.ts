@@ -30,6 +30,7 @@ export type ProposalInput = {
   projectDescription: string;
   serviceType: ServiceType;
   price: number;
+  pricingBreakdown?: PricingLine[];
   depositPercent?: number;
   timeline: string;
   tone: Tone;
@@ -51,6 +52,11 @@ export type ProposalOption = {
   includes: string[];
 };
 
+export type PricingLine = {
+  label: string;
+  amount: number;
+};
+
 export type Proposal = {
   title: string;
   businessName?: string;
@@ -61,6 +67,7 @@ export type Proposal = {
   scopeOfWork: string[];
   timeline: string;
   pricingSummary: string;
+  pricingBreakdown: PricingLine[];
   depositSummary?: string;
   paymentTerms: string[];
   assumptions: string[];

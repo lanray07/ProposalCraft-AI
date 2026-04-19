@@ -4,6 +4,7 @@ import {
   type ProposalExplanation,
   type ProposalInput,
   type ProposalOption,
+  type PricingLine,
   type RegenerateProposalInput,
   type ServiceTemplate,
   type ServiceType,
@@ -92,6 +93,7 @@ export function explainProposal(
       "Use the selected service template for scope, assumptions, terms, and upsells.",
       "Apply tone only to the overview and closing language.",
       "Format pricing from the numeric input without estimating hidden costs.",
+      "Include optional pricing breakdown lines only when supplied by the user.",
       "Create Good, Better, and Best options from fixed percentage adjustments.",
       "Return a fixed client-ready section order."
     ],
@@ -117,6 +119,7 @@ function buildProposal(input: ProposalInput): Proposal {
   const clientPrefix = input.clientName ? ` for ${input.clientName}` : "";
   const projectOverview = `${copy.greeting} This ${template.overviewLead} covers: ${cleanedDescription} ${copy.promise}`;
   const pricingSummary = `Total proposed price${clientPrefix}: ${formatCurrency(input.price)}. This price is based on the project details provided and the assumptions listed below.`;
+  const pricingBreakdown = input.pricingBreakdown ?? [];
   const proposalOptions = createProposalOptions(input.price, template);
   const depositSummary = createDepositSummary(input.price, input.depositPercent);
   const followUpEmail = createFollowUpEmail({
@@ -138,6 +141,7 @@ function buildProposal(input: ProposalInput): Proposal {
     scopeOfWork: createScope(template, cleanedDescription),
     timeline: input.timeline,
     pricingSummary,
+    pricingBreakdown,
     depositSummary,
     paymentTerms: template.paymentTerms,
     assumptions: template.assumptions,
@@ -168,7 +172,7 @@ function assembleProposal(proposal: Proposal): Proposal {
     { title: "Project Overview", body: proposal.projectOverview },
     { title: "Scope of Work", body: proposal.scopeOfWork },
     { title: "Timeline", body: proposal.timeline },
-    { title: "Pricing Summary", body: proposal.pricingSummary },
+    { title: "Pricing Summary", body: formatPricingSummary(proposal) },
     {
       title: "Proposal Options",
       body: formatProposalOptions(proposal.proposalOptions)
@@ -194,6 +198,29 @@ function assembleProposal(proposal: Proposal): Proposal {
 
 function createScope(template: ServiceTemplate, description: string): string[] {
   return [`Project-specific work: ${description}`, ...template.scopeItems];
+}
+
+function formatPricingSummary(proposal: Proposal): string | string[] {
+  if (proposal.pricingBreakdown.length === 0) {
+    return proposal.pricingSummary;
+  }
+
+  const lineTotal = roundMoney(
+    proposal.pricingBreakdown.reduce((total, line) => total + line.amount, 0)
+  );
+
+  return [
+    proposal.pricingSummary,
+    ...proposal.pricingBreakdown.map(formatPricingLine),
+    `Listed line-item subtotal: ${formatCurrency(lineTotal)}.`,
+    lineTotal === proposal.proposalOptions[0].price
+      ? "Line-item subtotal matches the proposed total."
+      : "Line-item subtotal is provided for transparency; the proposed total remains the controlling price."
+  ];
+}
+
+function formatPricingLine(line: PricingLine): string {
+  return `${line.label}: ${formatCurrency(line.amount)}`;
 }
 
 function createProposalOptions(
