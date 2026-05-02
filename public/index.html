@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ProposalCraft AI</title>
+    <style>
+      :root {
+        color: #17201b;
+        background: #f7f8f4;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+        line-height: 1.6;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background:
+          linear-gradient(135deg, rgba(15, 96, 77, 0.12), rgba(71, 145, 255, 0.12)),
+          #f7f8f4;
+      }
+
+      main {
+        width: min(980px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 56px 0 72px;
+      }
+
+      .hero {
+        border: 1px solid #d8ded4;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.92);
+        padding: 36px;
+        box-shadow: 0 18px 50px rgba(26, 38, 31, 0.08);
+      }
+
+      .eyebrow {
+        margin: 0 0 10px;
+        color: #0f604d;
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0 0 14px;
+        font-size: clamp(2.4rem, 5vw, 4.3rem);
+        line-height: 0.98;
+      }
+
+      h2 {
+        margin: 0 0 10px;
+        color: #0f604d;
+        font-size: 1.15rem;
+      }
+
+      p,
+      li {
+        color: #35433b;
+      }
+
+      .lede {
+        max-width: 760px;
+        font-size: 1.08rem;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+        margin-top: 28px;
+      }
+
+      .panel {
+        border: 1px solid #dfe5dc;
+        border-radius: 8px;
+        background: #fbfcf9;
+        padding: 20px;
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 18px;
+      }
+
+      .links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 24px;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        border: 1px solid #0f604d;
+        border-radius: 8px;
+        padding: 0 18px;
+        background: #0f604d;
+        color: #fff;
+        font-weight: 600;
+        text-decoration: none;
+      }
+
+      .button.secondary {
+        background: #fff;
+        color: #17201b;
+        border-color: #d8ded4;
+      }
+
+      .foot {
+        margin-top: 18px;
+        color: #607067;
+        font-size: 0.92rem;
+      }
+
+      @media (max-width: 760px) {
+        .hero {
+          padding: 24px;
+        }
+
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="hero">
+        <p class="eyebrow">ProposalCraft AI</p>
+        <h1>Create structured service proposals and PDFs.</h1>
+        <p class="lede">
+          ProposalCraft AI helps service businesses turn job details into
+          client-ready proposals with clear scope, pricing, payment terms,
+          assumptions, approval copy, and polished PDF exports.
+        </p>
+
+        <div class="grid">
+          <article class="panel">
+            <h2>What it does</h2>
+            <ul>
+              <li>Generates proposals for trades and service businesses</li>
+              <li>Uses deterministic templates by service type</li>
+              <li>Creates branded PDF proposal exports</li>
+              <li>Supports regenerate and explain actions</li>
+            </ul>
+          </article>
+
+          <article class="panel">
+            <h2>Supported use cases</h2>
+            <ul>
+              <li>Landscaping, paving, cleaning, plumbing, HVAC, roofing</li>
+              <li>General contractor, remodeling, flooring, electrical</li>
+              <li>Pressure washing, handyman, moving, appliance repair</li>
+              <li>And other service proposal workflows</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="links">
+          <a class="button" href="/privacy">Privacy Policy</a>
+          <a class="button secondary" href="/terms">Terms of Service</a>
+          <a class="button secondary" href="/support">Support</a>
+          <a class="button secondary" href="/mcp">MCP Endpoint</a>
+        </div>
+
+        <p class="foot">
+          Support: <a href="mailto:banksmi@mail.com">banksmi@mail.com</a>
+        </p>
+      </section>
+    </main>
+  </body>
+</html>
